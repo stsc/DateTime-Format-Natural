@@ -8,7 +8,7 @@ use base qw(
     DateTime::Format::Natural::Wrappers
 );
 
-our $VERSION = '1.36';
+our $VERSION = '1.37';
 
 use constant MORNING   => '08';
 use constant AFTERNOON => '14';
@@ -42,18 +42,6 @@ sub _now_variant
     });
 }
 
-sub _daytime_in_the_variant
-{
-    my $self = shift;
-    $self->_register_trace;
-    my $opts = pop;
-    my ($hour) = @_;
-    $hour += $opts->{hours} || 0;
-    if ($self->_valid_time(hour => $hour)) {
-        $self->_set(hour => $hour);
-    }
-}
-
 sub _daytime_variant
 {
     my $self = shift;
@@ -85,6 +73,7 @@ sub _daytime
     $self->_register_trace;
     my $opts = pop;
     my ($hour) = @_;
+    $hour += $opts->{hours} || 0;
     if ($self->_valid_time(hour => $hour)) {
         $self->_set(hour => $hour);
     }

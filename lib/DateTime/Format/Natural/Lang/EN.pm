@@ -10,7 +10,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.44';
+our $VERSION = '1.45';
 
 our (%init,
      %timespan,
@@ -2560,7 +2560,7 @@ our (%init,
          [],
          [ [ 0 ] ],
          [ {} ],
-         [ '_daytime_in_the_variant' ],
+         [ '_daytime' ],
          { truncate_to => 'hour' },
        ],
        [
@@ -2569,7 +2569,7 @@ our (%init,
          [],
          [ [ 0 ] ],
          [ { hours => 12 } ],
-         [ '_daytime_in_the_variant' ],
+         [ '_daytime' ],
          { truncate_to => 'hour' },
        ],
        [
@@ -2578,7 +2578,7 @@ our (%init,
          [],
          [ [ 0 ] ],
          [ { hours => 12 } ],
-         [ '_daytime_in_the_variant' ],
+         [ '_daytime' ],
          { truncate_to => 'hour' },
        ],
     ],
@@ -3117,7 +3117,7 @@ our (%init,
            [ 1 ],
          ],
          [ {}, {} ],
-         [ '_weekday', '_daytime_in_the_variant' ],
+         [ '_weekday', '_daytime' ],
          { truncate_to => 'hour' },
        ],
        [
@@ -3131,7 +3131,7 @@ our (%init,
            [ 1 ],
          ],
          [ {}, { hours => 12 } ],
-         [ '_weekday', '_daytime_in_the_variant' ],
+         [ '_weekday', '_daytime' ],
          { truncate_to => 'hour' },
        ],
        [
@@ -3145,7 +3145,7 @@ our (%init,
            [ 1 ],
          ],
          [ {}, { hours => 12 } ],
-         [ '_weekday', '_daytime_in_the_variant' ],
+         [ '_weekday', '_daytime' ],
          { truncate_to => 'hour' },
        ],
     ],
@@ -4502,7 +4502,8 @@ language or implicitly.
 =head1 EXAMPLES
 
 Below are some examples of human readable date/time input in english (be aware
-that the parser does not distinguish between lower/upper case):
+that the parser does not distinguish between lower/upper case; furthermore,
+times are also parseable with precision in seconds):
 
 =head2 Simple
 

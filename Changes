@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.91_04  2011-01-12  <schubiger@cpan.org>
+
+ - Merge _daytime_in_the_variant() into _daytime().
+
+ - Document for times that precision in seconds may be applied.
+
 0.91_03  2011-01-09  <schubiger@cpan.org>
 
  - Allow for time regexes to match times with precision in seconds.
