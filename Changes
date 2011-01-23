@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.92_01  2011-01-23  <schubiger@cpan.org>
+
+ - Place the constant.pm segmentation fault workaround comment
+   at the top of the grammar class.
+
 0.92  2011-01-14  <schubiger@cpan.org>
 
  - Merged development version to stable.

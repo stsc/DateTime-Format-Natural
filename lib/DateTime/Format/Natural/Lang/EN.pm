@@ -3,6 +3,9 @@ package DateTime::Format::Natural::Lang::EN;
 use strict;
 use warnings;
 use base qw(DateTime::Format::Natural::Lang::Base);
+# XXX constant.pm true/false: workaround for a segmentation fault
+# in Perl_mg_find() on perl 5.8.9 and 5.10.0 when using boolean.pm
+# v0.20 (tested as of 12/02/2009).
 #use boolean qw(true false);
 use constant true  => 1;
 use constant false => 0;
@@ -10,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.45';
+our $VERSION = '1.46';
 
 our (%init,
      %timespan,
@@ -213,10 +216,6 @@ our (%init,
               error => "plural without suffix 's'",
             },
         );
-
-        # XXX constant.pm true/false: workaround for a segmentation fault
-        # in Perl_mg_find() on perl 5.8.9 and 5.10.0 when using boolean.pm
-        # v0.20 (tested as of 12/02/2009).
         foreach my $check (@checks) {
             if ($check->{cond}->()) {
                 $$error = $check->{error};
