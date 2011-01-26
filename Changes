@@ -1,5 +1,14 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.92_02  2011-01-25  <schubiger@cpan.org>
+
+ - New supported format: <month> <monthday>, <year> <time am/pm>.
+   [rt #65072 - Dave Rolsky]
+
+ - Sort weekdays and months metadata arrays in ascending order.
+
+ - Purge unused hour precisions from truncate_to grammar options.
+
 0.92_01  2011-01-23  <schubiger@cpan.org>
 
  - Place the constant.pm segmentation fault workaround comment

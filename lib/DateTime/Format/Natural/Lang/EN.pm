@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.46';
+our $VERSION = '1.47';
 
 our (%init,
      %timespan,
@@ -47,6 +47,19 @@ our (%init,
        day       => qr/^(\d+)($suffixes{ordinal})?$/i,
        monthday  => qr/^(\d{1,2})($suffixes{ordinal})?$/i);
 {
+    my $sort = sub
+    {
+        my ($data) = @_;
+        return sort { $data->{$a} <=> $data->{$b} } keys %$data;
+    };
+    my $sort_abbrev = sub
+    {
+        my ($data_abbrev, $data) = @_;
+        return sort {
+            $data->{$data_abbrev->{$a}} <=> $data->{$data_abbrev->{$b}}
+        } keys %$data_abbrev;
+    };
+
     my $i = 1;
 
     %data_weekdays = map {
@@ -56,7 +69,7 @@ our (%init,
         substr($_, 0, 3) => $_
     } keys %data_weekdays;
 
-    @data_weekdays_all = (keys %data_weekdays, keys %data_weekdays_abbrev);
+    @data_weekdays_all = ($sort->(\%data_weekdays), $sort_abbrev->(\%data_weekdays_abbrev, \%data_weekdays));
 
     my $days_re = join '|', @data_weekdays_all;
     $RE{weekday} = qr/^($days_re)$/i;
@@ -74,7 +87,7 @@ our (%init,
         substr($_, 0, 3) => $_
     } keys %data_months;
 
-    @data_months_all = (keys %data_months, keys %data_months_abbrev);
+    @data_months_all = ($sort->(\%data_months), $sort_abbrev->(\%data_months_abbrev, \%data_months));
 
     my $months_re = join '|', @data_months_all;
     $RE{month} = qr/^($months_re)$/i;
@@ -1494,7 +1507,7 @@ our (%init,
          ],
          [ {}, {} ],
          [ '_month_day', '_time' ],
-         { truncate_to => [qw(hour minute)] },
+         { truncate_to => [qw(minute)] },
        ],
        [
          { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{time_am} },
@@ -1568,6 +1581,61 @@ our (%init,
          { truncate_to => [qw(hour minute)] },
        ],
     ],
+    month_day_year_at => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{year}, 3 => $RE{time} },
+         [ [ 1 ] ],
+         [ $extended_checks{ordinal} ],
+         [
+           [
+               1,
+             { 0 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [ 2 ],
+           [ 3 ],
+         ],
+         [ {}, { unit => 'year' }, {} ],
+         [ '_month_day', '_unit_date', '_time' ],
+         { truncate_to => [qw(hour minute)] },
+       ],
+       [
+         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{year}, 3 => $RE{time_am} },
+         [ [ 1 ], [ 3 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               1,
+             { 0 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [ 2 ],
+           [
+             { 3 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, { unit => 'year' }, {} ],
+         [ '_month_day', '_unit_date', '_at' ],
+         { truncate_to => [qw(hour minute)] },
+       ],
+       [
+         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{year}, 3 => $RE{time_pm} },
+         [ [ 1 ], [ 3 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               1,
+             { 0 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [ 2 ],
+           [
+             { 3 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, { unit => 'year' }, {} ],
+         [ '_month_day', '_unit_date', '_at' ],
+         { truncate_to => [qw(hour minute)] },
+       ],
+    ],
     day_month_at => [
        [ 'REGEXP', 'REGEXP', 'REGEXP' ],
        [
@@ -1583,7 +1651,7 @@ our (%init,
          ],
          [ {}, {} ],
          [ '_month_day', '_time' ],
-         { truncate_to => [qw(hour minute)] },
+         { truncate_to => [qw(minute)] },
        ],
        [
          { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{time_am} },
@@ -1672,7 +1740,7 @@ our (%init,
          ],
          [ {}, {} ],
          [ '_time', '_month_day' ],
-         { truncate_to => [qw(hour minute)] },
+         { truncate_to => [qw(minute)] },
        ],
        [
          { 0 => $RE{time_am}, 1 => $RE{month}, 2 => $RE{monthday} },
@@ -4815,6 +4883,9 @@ times are also parseable with precision in seconds):
  7pm jul 1
  7 am jul 1
  7 pm jul 1
+ jan 24, 2011 12:00
+ jan 24, 2011 12am
+ jan 24, 2011 12pm
  may 27th
  2005
  march 1st 2009

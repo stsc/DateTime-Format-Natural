@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 309;
+use Test::More tests => 316;
 
 my %errors = (
     with_suffix      => qr/suffix 's' without plural/,
@@ -211,6 +211,8 @@ my @meridiem_exceeds = ($errors{meridiem_exceeds},
     'yesterday at 22pm',
     'today at 22pm',
     'tomorrow at 22pm',
+    'jan 24, 2011 23am',
+    'jan 24, 2011 23pm',
 ]);
 
 my @meridiem_zero = ($errors{meridiem_zero},
@@ -295,6 +297,8 @@ my @meridiem_zero = ($errors{meridiem_zero},
     'yesterday at 0pm',
     'today at 0pm',
     'tomorrow at 0pm',
+    'jan 24, 2011 0am',
+    'jan 24, 2011 0pm',
 ]);
 
 my @ordinal_number = ($errors{ordinal_number},
@@ -342,6 +346,9 @@ my @ordinal_number = ($errors{ordinal_number},
     'jan 3th 2000',
     '2010 october 28st',
     '2st friday in august',
+    'jan 24nd, 2011 12:00',
+    'jan 24nd, 2011 12am',
+    'jan 24nd, 2011 12pm',
 ]);
 
 check(\@with_suffix);
