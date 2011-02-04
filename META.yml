@@ -1,6 +1,6 @@
 ---
 name: DateTime-Format-Natural
-version: 0.92_02
+version: 0.93
 author:
   - 'Steven Schubiger <schubiger@cpan.org>'
 abstract: Create machine readable date/time with natural parsing logic
@@ -35,7 +35,7 @@ configure_requires:
 provides:
   DateTime::Format::Natural:
     file: lib/DateTime/Format/Natural.pm
-    version: 0.92_02
+    version: 0.93
   DateTime::Format::Natural::Aliases:
     file: lib/DateTime/Format/Natural/Aliases.pm
     version: 0.03
