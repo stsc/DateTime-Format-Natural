@@ -13,12 +13,13 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.47';
+our $VERSION = '1.48';
 
 our (%init,
      %timespan,
      %units,
      %suffixes,
+     %regexes,
      %RE,
      %data_weekdays,
      %data_weekdays_abbrev,
@@ -37,6 +38,7 @@ our (%init,
 %timespan = (literal => 'to');
 %units    = (ordered => [ qw(second minute hour day week month year) ]);
 %suffixes = (ordinal => join '|', qw(st nd rd th d));
+%regexes  = (format  => qr!^((?:\d+?[-./])+ (?:\d+?)) \b!x);
 
 %RE = (number    => qr/^(\d+)$/,
        year      => qr/^(\d{4})$/,
@@ -2499,7 +2501,7 @@ our (%init,
     time => [
        [ 'REGEXP' ],
        [
-         { 0 => $RE{time} },
+         { 0 => $RE{time_min} },
          [],
          [],
          [ [ 0 ] ],
@@ -4570,7 +4572,7 @@ language or implicitly.
 
 Below are some examples of human readable date/time input in english (be aware
 that the parser does not distinguish between lower/upper case; furthermore,
-times are also parseable with precision in seconds):
+times are also parsable with precision in seconds):
 
 =head2 Simple
 

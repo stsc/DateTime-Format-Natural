@@ -7,6 +7,7 @@ lib/DateTime/Format/Natural/Calc.pm
 lib/DateTime/Format/Natural/Compat.pm
 lib/DateTime/Format/Natural/Duration.pm
 lib/DateTime/Format/Natural/Duration/Checks.pm
+lib/DateTime/Format/Natural/Extract.pm
 lib/DateTime/Format/Natural/Formatted.pm
 lib/DateTime/Format/Natural/Helpers.pm
 lib/DateTime/Format/Natural/Lang/Base.pm
@@ -31,8 +32,9 @@ t/08-parse_aliases.t
 t/09-parse_success.t
 t/10-parse_failure.t
 t/11-parse_assert.t
-t/12-regression.t
-t/13-state.t
-t/14-trace.t
+t/12-extract_expression.t
+t/13-regression.t
+t/14-state.t
+t/15-trace.t
 t/pod-coverage.t
 t/pod.t

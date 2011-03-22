@@ -1,5 +1,20 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.93_01  2011-03-21  <schubiger@cpan.org>
+
+ - Introduce a class to extract parsable expressions from strings.
+   [suggested by Colm Dougan]
+
+ - Add and document the extract_datetime() method.
+
+ - Test extracting parsable expressions.
+
+ - Require precision in hour or higher for one token time expressions,
+   otherwise extracting expressions would be impeded.
+
+ - Move the formatted string regex to the grammar class;
+   furthermore, move the according checks to the formatted class.
+
 0.93  2011-02-04  <schubiger@cpan.org>
 
  - Merged development version to stable.

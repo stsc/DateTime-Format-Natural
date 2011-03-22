@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use boolean qw(true false);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub _parse_formatted_ymd
 {
@@ -148,6 +148,41 @@ sub _process_tokens
         $self->_unset_valid_exp;
         $self->_process;
     }
+}
+
+sub _count_separators
+{
+    my $self = shift;
+    my ($formatted) = @_;
+
+    my %count;
+    if (defined $formatted) {
+        my @count = $formatted =~ m![-./]!g;
+        $count{$_}++ foreach @count;
+    }
+
+    return %count;
+}
+
+sub _check_formatted
+{
+    my $self = shift;
+    my ($check, $count) = @_;
+
+    my %checks = (
+        ymd => sub
+        {
+            my ($count) = @_;
+            return scalar keys %$count == 1 && $count->{(keys %$count)[0]} == 2;
+        },
+        md => sub
+        {
+            my ($count) = @_;
+            return scalar keys %$count == 1 && $count->{(keys %$count)[0]} == 1 && (keys %$count)[0] eq '/';
+        },
+    );
+
+    return $checks{$check}->($count);
 }
 
 1;

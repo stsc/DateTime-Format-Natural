@@ -6,6 +6,7 @@ use base qw(
     DateTime::Format::Natural::Aliases
     DateTime::Format::Natural::Calc
     DateTime::Format::Natural::Duration
+    DateTime::Format::Natural::Extract
     DateTime::Format::Natural::Formatted
     DateTime::Format::Natural::Helpers
 );
@@ -18,7 +19,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.93';
+our $VERSION = '0.93_01';
 
 validation_options(
     on_fail => sub
@@ -139,27 +140,22 @@ sub parse_datetime
     $self->_rewrite_aliases(\$date_string);
     $date_string =~ tr/,//d;
 
-    my ($formatted) = $date_string =~ m!^((?:\d+?[-./])+ (?:\d+?)) \b!x;
-
-    my %count;
-    if (defined $formatted) {
-        my @count = $formatted =~ m![-./]!g;
-        $count{$_}++ foreach @count;
-    }
+    my ($formatted) = $date_string =~ $self->{data}->__regexes('format');
+    my %count = $self->_count_separators($formatted);
 
     $self->{tokens} = [];
     $self->{traces} = [];
 
-    if (scalar keys %count == 1 && $count{(keys %count)[0]} == 2) {
+    if ($self->_check_formatted('ymd', \%count)) {
         my $dt = $self->_parse_formatted_ymd($date_string, \%count);
         return $dt if blessed($dt);
     }
-    elsif (scalar keys %count == 1 && $count{(keys %count)[0]} == 1 && (keys %count)[0] eq '/') {
+    elsif ($self->_check_formatted('md', \%count)) {
         my $dt = $self->_parse_formatted_md($date_string);
         return $dt if blessed($dt);
 
         if ($self->{Prefer_future}) {
-            $self->_advance_future(qw(md));
+            $self->_advance_future('md');
         }
     }
     elsif ($date_string =~ /^([+-]) (\d+?) ([a-zA-Z]+)$/x) {
@@ -303,6 +299,18 @@ sub parse_datetime_duration
     }
 
     return @queue;
+}
+
+sub extract_datetime
+{
+    my $self = shift;
+
+    my $extract_string;
+    $self->_params_init(@_, { string => \$extract_string });
+
+    my @expressions = $self->_extract_expressions($extract_string);
+
+    return wantarray ? @expressions : $expressions[0];
 }
 
 sub success
@@ -565,6 +573,9 @@ DateTime::Format::Natural - Create machine readable date/time with natural parsi
 
  $parser = DateTime::Format::Natural->new;
 
+ $date_string  = $parser->extract_datetime($extract_string);
+ @date_strings = $parser->extract_datetime($extract_string);
+
  $dt = $parser->parse_datetime($date_string);
  @dt = $parser->parse_datetime_duration($date_string);
 
@@ -665,6 +676,20 @@ list context.
  @dt = $parser->parse_datetime_duration($date_string);
  @dt = $parser->parse_datetime_duration(string => $date_string);
 
+=head2 extract_datetime
+
+Returns parsable date/time substrings (also known as expressions) extracted
+from the string provided; in scalar context only the first parsable substring
+is returned, whereas in list context all parsable substrings are returned.
+Each extracted substring can then be passed to the C<parse_datetime()>/
+C<parse_datetime_duration()> methods.
+
+ $date_string  = $parser->extract_datetime($extract_string);
+ @date_strings = $parser->extract_datetime($extract_string);
+ # or
+ $date_string  = $parser->extract_datetime(string => $extract_string);
+ @date_strings = $parser->extract_datetime(string => $extract_string);
+
 =head2 success
 
 Returns a boolean indicating success or failure for parsing the date/time
@@ -743,6 +768,7 @@ valuable suggestions and patches:
  Vladimir Marek
  Rod Taylor
  Tim Esselens
+ Colm Dougan
 
 =head1 SEE ALSO
 
