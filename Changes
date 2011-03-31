@@ -1,5 +1,17 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.93_02  2011-03-31  <schubiger@cpan.org>
+
+ - Set month and implicit day explicitly to avoid overlap parse
+   failures; add a regression test. [reported by Chifung Fan]
+
+ - Keep the minute or higher precision requirement when extracting
+   one token time expressions, but undo the grammar change.
+
+ - Test one token time expression with precision in hour.
+
+ - Use more descriptive variable names within the extract class.
+
 0.93_01  2011-03-21  <schubiger@cpan.org>
 
  - Introduce a class to extract parsable expressions from strings.

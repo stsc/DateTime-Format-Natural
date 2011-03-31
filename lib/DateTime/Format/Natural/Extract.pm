@@ -5,16 +5,16 @@ use warnings;
 use base qw(DateTime::Format::Natural::Formatted);
 use boolean qw(true false);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub _extract_expressions
 {
     my $self = shift;
-    my ($string) = @_;
+    my ($extract_string) = @_;
 
-    $string =~ s/(?=[,;.])/ /g; # pretend punctuation marks are tokens
+    $extract_string =~ s/(?=[,;.])/ /g; # pretend punctuation marks are tokens
 
-    my @tokens = split /\s+/, $string;
+    my @tokens = split /\s+/, $extract_string;
     my %entries = %{$self->{data}->__grammar('')};
 
     my @expressions;
@@ -108,7 +108,9 @@ sub _finalize_expressions
         }
     }
 
-    return @final_expressions;
+    my $exclude = sub { $_[0] =~ /^\d{1,2}$/ };
+
+    return grep !$exclude->($_), @final_expressions;
 }
 
 1;

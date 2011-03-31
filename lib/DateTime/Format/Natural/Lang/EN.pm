@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.48';
+our $VERSION = '1.49';
 
 our (%init,
      %timespan,
@@ -2501,7 +2501,7 @@ our (%init,
     time => [
        [ 'REGEXP' ],
        [
-         { 0 => $RE{time_min} },
+         { 0 => $RE{time} },
          [],
          [],
          [ [ 0 ] ],

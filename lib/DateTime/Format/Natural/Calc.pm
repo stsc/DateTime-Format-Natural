@@ -8,7 +8,7 @@ use base qw(
     DateTime::Format::Natural::Wrappers
 );
 
-our $VERSION = '1.37';
+our $VERSION = '1.38';
 
 use constant MORNING   => '08';
 use constant AFTERNOON => '14';
@@ -116,6 +116,7 @@ sub _unit_date
     $self->_register_trace;
     my $opts = pop;
     my ($value) = @_;
+    $self->{datetime}->set(day => 1) if $opts->{unit} eq 'month';
     if ($self->_valid_date($opts->{unit} => $value)) {
         $self->_set($opts->{unit} => $value);
     }
