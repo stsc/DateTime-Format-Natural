@@ -5,7 +5,7 @@ use warnings;
 use base qw(DateTime::Format::Natural::Formatted);
 use boolean qw(true false);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub _extract_expressions
 {
@@ -13,6 +13,8 @@ sub _extract_expressions
     my ($extract_string) = @_;
 
     $extract_string =~ s/(?=[,;.])/ /g; # pretend punctuation marks are tokens
+
+    $self->_rewrite_aliases(\$extract_string);
 
     my @tokens = split /\s+/, $extract_string;
     my %entries = %{$self->{data}->__grammar('')};

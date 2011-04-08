@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.49';
+our $VERSION = '1.50';
 
 our (%init,
      %timespan,
@@ -145,6 +145,7 @@ our (%init,
     %data_aliases = (
         words => {
             tues  => 'tue',
+            thur  => 'thu',
             thurs => 'thu',
         },
         tokens => {
@@ -4913,6 +4914,7 @@ times are also parsable with precision in seconds):
  final thurs in sep
  tues
  thurs
+ thur
 
 =head1 SEE ALSO
 

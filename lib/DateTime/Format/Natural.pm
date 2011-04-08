@@ -19,7 +19,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.94';
+our $VERSION = '0.94_01';
 
 validation_options(
     on_fail => sub
@@ -136,9 +136,9 @@ sub parse_datetime
     $self->{input_string} = $self->{date_string};
 
     my $date_string = $self->{date_string};
+    $date_string =~ tr/,//d;
 
     $self->_rewrite_aliases(\$date_string);
-    $date_string =~ tr/,//d;
 
     my ($formatted) = $date_string =~ $self->{data}->__regexes('format');
     my %count = $self->_count_separators($formatted);

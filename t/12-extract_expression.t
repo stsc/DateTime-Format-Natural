@@ -8,7 +8,7 @@ use DateTime::Format::Natural::Test qw($case_strings);
 use Test::More tests => 13 * 3; # case tests
 
 my @strings = (
-    { 'see you next tuesday for coffee',                    => [ 'next tuesday'                            ] },
+    { 'see you next thurs for coffee',                      => [ 'next thu'                                ] },
     { "I'll meet you on 15th march at the cinema"           => [ '15th march'                              ] },
     { 'payment is due in 30 days'                           => [ 'in 30 days'                              ] },
     { 'johann sebastian bach was born 21/03/1685'           => [ '21/03/1685'                              ] },

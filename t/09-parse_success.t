@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Natural;
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 my @ordinal_number = (
     '2d aug',
@@ -22,8 +22,13 @@ my @durations = (
     '26 oct 10:00pm to 11:00pm',
 );
 
+my @filtered = (
+    'thurs,',
+);
+
 check(\@ordinal_number);
 check(\@durations);
+check(\@filtered);
 
 sub check
 {

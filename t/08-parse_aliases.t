@@ -14,9 +14,10 @@ my @aliases = (
     { 'final thurs in sep' => '28.09.2006 00:00:00' },
     { 'tues'               => '21.11.2006 00:00:00' },
     { 'thurs'              => '23.11.2006 00:00:00' },
+    { 'thur'               => '23.11.2006 00:00:00' },
 );
 
-_run_tests(6, [ [ \@aliases ] ], \&compare);
+_run_tests(7, [ [ \@aliases ] ], \&compare);
 
 sub compare
 {

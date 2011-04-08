@@ -1,5 +1,17 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.94_01  2011-04-07  <schubiger@cpan.org>
+
+ - Rewrite aliases when extracting parsable expressions; amend
+   an extract test. [Colm Dougan]
+
+ - Add, test and document another weekday alias for thursday.
+   [Colm Dougan]
+
+ - Remove commas from date string now before rewriting aliases.
+
+ - Test that commas are filtered for aliases.
+
 0.94  2011-04-02  <schubiger@cpan.org>
 
  - Merged development version to stable.
