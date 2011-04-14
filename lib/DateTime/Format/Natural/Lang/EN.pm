@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.50';
+our $VERSION = '1.51';
 
 our (%init,
      %timespan,
@@ -38,7 +38,7 @@ our (%init,
 %timespan = (literal => 'to');
 %units    = (ordered => [ qw(second minute hour day week month year) ]);
 %suffixes = (ordinal => join '|', qw(st nd rd th d));
-%regexes  = (format  => qr!^((?:\d+?[-./])+ (?:\d+?)) \b!x);
+%regexes  = (format  => qr!^((?:\d+?(?:-(?:[a-zA-Z]+?|\d+?)-|[./]\d+?[./])\d+?) | (?:\d+?/\d+?)) (?:(?=\s)|$)!x);
 
 %RE = (number    => qr/^(\d+)$/,
        year      => qr/^(\d{4})$/,
@@ -4897,6 +4897,7 @@ times are also parsable with precision in seconds):
  jan 3 2010
  3 jan 2000
  2010 october 28
+ 2011-jan-04
  27/5/1979
  1/3
  1/3 16:00

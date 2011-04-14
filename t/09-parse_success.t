@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Natural;
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 my @ordinal_number = (
     '2d aug',
@@ -26,9 +26,13 @@ my @filtered = (
     'thurs,',
 );
 
-check(\@ordinal_number);
-check(\@durations);
-check(\@filtered);
+my @formatted = (
+    '2011-Jan-04',
+);
+
+foreach my $list (\@ordinal_number, \@durations, \@filtered, \@formatted) {
+    check($list);
+}
 
 sub check
 {

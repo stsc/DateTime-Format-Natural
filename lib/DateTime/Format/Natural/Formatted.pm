@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use boolean qw(true false);
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub _parse_formatted_ymd
 {
@@ -15,6 +15,13 @@ sub _parse_formatted_ymd
 
     my $date_sep = quotemeta((keys %$count)[0]);
     my @date_chunks = split /$date_sep/, $date;
+
+    if ($date_chunks[1] =~ /^[a-zA-Z]+$/
+      and my ($month_abbrev) = grep { $date_chunks[1] =~ /^${_}$/i } keys %{$self->{data}->{months_abbrev}}
+    ) {
+        my ($months_abbrev, $months) = map $self->{data}->{$_}, qw(months_abbrev months);
+        $date_chunks[1] = sprintf '%02d', $months->{$months_abbrev->{$month_abbrev}};
+    }
 
     my $i = 0;
     my %chunks_length = map { length $_ => $i++ } @date_chunks;

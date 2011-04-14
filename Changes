@@ -1,5 +1,17 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.94_02  2011-04-14  <schubiger@cpan.org>
+
+ - Parse and document formatted dates with an abbreviated month name
+   in the middle; add a regular and a case related success test.
+   [rt #67395 - Rod Taylor]
+
+ - Extend the format regex accordingly and fix partly broken
+   checking for a formatted date boundary.
+
+ - Add assert tests for the fixed formatted date boundary check
+   and new month name validation.
+
 0.94_01  2011-04-07  <schubiger@cpan.org>
 
  - Rewrite aliases when extracting parsable expressions; amend
