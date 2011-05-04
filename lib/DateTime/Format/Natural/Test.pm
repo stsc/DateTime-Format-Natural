@@ -14,7 +14,7 @@ use Test::More;
 our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings, $time_entries);
 my @set;
 
-$VERSION = '0.07';
+$VERSION = '0.08';
 
 @set         =  qw(%time $case_strings $time_entries _run_tests _result_string _message);
 @EXPORT_OK   = (qw(_find_modules _find_files), @set);
@@ -31,6 +31,21 @@ $case_strings = sub { ($_[0], lc $_[0], uc $_[0]) };
 $time_entries = sub
 {
     my ($string, $result) = @_;
+
+    my $subst_space = sub
+    {
+        my ($str, $res, $entries) = @_;
+
+        if ($str =~ /\{ \}/) {
+            foreach my $space ('', ' ') {
+                (my $str_new = $str) =~ s/\{ \}/$space/;
+                push @$entries, [ $str_new, $res ];
+            }
+        }
+        else {
+            push @$entries, [ $str, $res ];
+        }
+    };
 
     my @entries;
     if ($string =~ /\{(?:min_)?sec\}/) {
@@ -55,11 +70,11 @@ $time_entries = sub
         foreach my $value (@values) {
             (my $str = $string) =~ s/\{$desc\}/$value->[0]/;
             (my $res = $result) =~ s/\{$desc\}/$value->[1]/;
-            push @entries, [ $str, $res ];
+            $subst_space->($str, $res, \@entries);
         }
     }
     else {
-        @entries = ([ $string, $result ]);
+        $subst_space->($string, $result, \@entries);
     }
 
     return @entries;

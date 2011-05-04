@@ -3,12 +3,12 @@ package DateTime::Format::Natural;
 use strict;
 use warnings;
 use base qw(
-    DateTime::Format::Natural::Aliases
     DateTime::Format::Natural::Calc
     DateTime::Format::Natural::Duration
     DateTime::Format::Natural::Extract
     DateTime::Format::Natural::Formatted
     DateTime::Format::Natural::Helpers
+    DateTime::Format::Natural::Rewrite
 );
 use boolean qw(true false);
 
@@ -19,7 +19,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.94_02';
+our $VERSION = '0.94_03';
 
 validation_options(
     on_fail => sub
@@ -136,8 +136,8 @@ sub parse_datetime
     $self->{input_string} = $self->{date_string};
 
     my $date_string = $self->{date_string};
-    $date_string =~ tr/,//d;
 
+    $self->_rewrite_regular(\$date_string);
     $self->_rewrite_aliases(\$date_string);
 
     my ($formatted) = $date_string =~ $self->{data}->__regexes('format');

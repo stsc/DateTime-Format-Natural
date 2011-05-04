@@ -1,9 +1,18 @@
-package DateTime::Format::Natural::Aliases;
+package DateTime::Format::Natural::Rewrite;
 
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
+
+sub _rewrite_regular
+{
+    my $self = shift;
+    my ($date_string) = @_;
+
+    $$date_string =~ tr/,//d;
+    $$date_string =~ s/\s+?(am|pm)\b/$1/i;
+}
 
 sub _rewrite_aliases
 {
@@ -39,7 +48,7 @@ __END__
 
 =head1 NAME
 
-DateTime::Format::Natural::Aliases - Aliasing of date strings
+DateTime::Format::Natural::Rewrite - Aliasing and rewriting of date strings
 
 =head1 SYNOPSIS
 
@@ -47,7 +56,8 @@ DateTime::Format::Natural::Aliases - Aliasing of date strings
 
 =head1 DESCRIPTION
 
-The C<DateTime::Format::Natural::Aliases> class handles aliases for date strings.
+The C<DateTime::Format::Natural::Rewrite> class handles aliases and regular
+rewrites of date strings.
 
 =head1 SEE ALSO
 

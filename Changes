@@ -1,5 +1,15 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.94_03  2011-05-03  <schubiger@cpan.org>
+
+ - Rename the aliases class to the more generic name rewrite.
+
+ - Parse times with AM/PM at word boundary separated by a space
+   (through removing the space before parsing).
+   [rt #67561 - Dave Rolsky]
+
+ - Purge now unused grammar entries and consolidate tests.
+
 0.94_02  2011-04-14  <schubiger@cpan.org>
 
  - Parse and document formatted dates with an abbreviated month name
