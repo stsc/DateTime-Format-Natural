@@ -14,7 +14,7 @@ use Test::More;
 our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings, $time_entries);
 my @set;
 
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 @set         =  qw(%time $case_strings $time_entries _run_tests _result_string _message);
 @EXPORT_OK   = (qw(_find_modules _find_files), @set);
@@ -32,15 +32,30 @@ $time_entries = sub
 {
     my ($string, $result) = @_;
 
-    my $subst_space = sub
+    my $subst = sub
     {
         my ($str, $res, $entries) = @_;
 
-        if ($str =~ /\{ \}/) {
-            foreach my $space ('', ' ') {
-                (my $str_new = $str) =~ s/\{ \}/$space/;
-                push @$entries, [ $str_new, $res ];
+        if ($str =~ /\{(?: |at)\}/) {
+            my @strings;
+            if ($str =~ /\{ \}/) {
+                foreach my $space ('', ' ') {
+                    (my $str_new = $str) =~ s/\{ \}/$space/;
+                    push @strings, $str_new;
+                }
             }
+            if ($str =~ /\{at\}/) {
+                push @strings, $str unless @strings;
+                my @strings_new;
+                foreach my $string (@strings) {
+                    foreach my $at ('', ' at') {
+                        (my $str_new = $string) =~ s/ \{at\}/$at/;
+                        push @strings_new, $str_new;
+                    }
+                }
+                @strings = @strings_new;
+            }
+            push @$entries, [ $_, $res ] foreach @strings;
         }
         else {
             push @$entries, [ $str, $res ];
@@ -70,11 +85,11 @@ $time_entries = sub
         foreach my $value (@values) {
             (my $str = $string) =~ s/\{$desc\}/$value->[0]/;
             (my $res = $result) =~ s/\{$desc\}/$value->[1]/;
-            $subst_space->($str, $res, \@entries);
+            $subst->($str, $res, \@entries);
         }
     }
     else {
-        $subst_space->($string, $result, \@entries);
+        $subst->($string, $result, \@entries);
     }
 
     return @entries;

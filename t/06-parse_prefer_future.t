@@ -40,25 +40,25 @@ my @simple = (
 );
 
 my @combined = (
-    { '4th february'                 => '04.02.2007 00:00:00'     },
-    { 'november 3rd'                 => '03.11.2007 00:00:00'     },
-    { 'sunday 11:00{sec}'            => '26.11.2006 11:00:{sec}'  },
-    { 'sunday 11:00{sec}{ }am'       => '26.11.2006 11:00:{sec}'  },
-    { 'sunday 11:00{sec}{ }pm'       => '26.11.2006 23:00:{sec}'  },
-    { 'monday at 8{min_sec}'         => '27.11.2006 08:{min_sec}' },
-    { 'monday at 8{min_sec}{ }am'    => '27.11.2006 08:{min_sec}' },
-    { 'tuesday at 8{min_sec}{ }pm'   => '28.11.2006 20:{min_sec}' },
-    { 'wednesday at 4{min_sec}{ }pm' => '29.11.2006 16:{min_sec}' },
-    { 'friday 03:00{sec}{ }am'       => '24.11.2006 03:00:{sec}'  },
-    { 'friday 03:00{sec}{ }pm'       => '24.11.2006 15:00:{sec}'  },
-    { 'monday at 03:00{sec}{ }am'    => '27.11.2006 03:00:{sec}'  },
-    { 'monday at 03:00{sec}{ }pm'    => '27.11.2006 15:00:{sec}'  },
-    { '4:00{sec} thu'                => '30.11.2006 04:00:{sec}'  },
-    { '4{min_sec}{ }am thu'          => '30.11.2006 04:{min_sec}' },
-    { '4{min_sec}{ }pm thu'          => '30.11.2006 16:{min_sec}' },
-    { '4:00{sec} on thu'             => '30.11.2006 04:00:{sec}'  },
-    { '4{min_sec}{ }am on thu'       => '30.11.2006 04:{min_sec}' },
-    { '4{min_sec}{ }pm on thu'       => '30.11.2006 16:{min_sec}' },
+    { '4th february'                   => '04.02.2007 00:00:00'     },
+    { 'november 3rd'                   => '03.11.2007 00:00:00'     },
+    { 'sunday {at} 11:00{sec}'         => '26.11.2006 11:00:{sec}'  },
+    { 'sunday {at} 11:00{sec}{ }am'    => '26.11.2006 11:00:{sec}'  },
+    { 'sunday {at} 11:00{sec}{ }pm'    => '26.11.2006 23:00:{sec}'  },
+    { 'monday {at} 8{min_sec}'         => '27.11.2006 08:{min_sec}' },
+    { 'monday {at} 8{min_sec}{ }am'    => '27.11.2006 08:{min_sec}' },
+    { 'tuesday {at} 8{min_sec}{ }pm'   => '28.11.2006 20:{min_sec}' },
+    { 'wednesday {at} 4{min_sec}{ }pm' => '29.11.2006 16:{min_sec}' },
+    { 'friday {at} 03:00{sec}{ }am'    => '24.11.2006 03:00:{sec}'  },
+    { 'friday {at} 03:00{sec}{ }pm'    => '24.11.2006 15:00:{sec}'  },
+    { 'monday {at} 03:00{sec}{ }am'    => '27.11.2006 03:00:{sec}'  },
+    { 'monday {at} 03:00{sec}{ }pm'    => '27.11.2006 15:00:{sec}'  },
+    { '4:00{sec} thu'                  => '30.11.2006 04:00:{sec}'  },
+    { '4{min_sec}{ }am thu'            => '30.11.2006 04:{min_sec}' },
+    { '4{min_sec}{ }pm thu'            => '30.11.2006 16:{min_sec}' },
+    { '4:00{sec} on thu'               => '30.11.2006 04:00:{sec}'  },
+    { '4{min_sec}{ }am on thu'         => '30.11.2006 04:{min_sec}' },
+    { '4{min_sec}{ }pm on thu'         => '30.11.2006 16:{min_sec}' },
 );
 
 my @formatted = (
@@ -66,7 +66,7 @@ my @formatted = (
     { '12/24' => '24.12.2006 00:00:00' },
 );
 
-_run_tests(117, [ [ \@simple ], [ \@combined ], [ \@formatted ] ], \&compare);
+_run_tests(164, [ [ \@simple ], [ \@combined ], [ \@formatted ] ], \&compare);
 
 sub compare
 {

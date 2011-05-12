@@ -3,7 +3,17 @@ package DateTime::Format::Natural::Rewrite;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
+
+sub _rewrite
+{
+    my $self = shift;
+    my ($date_string) = @_;
+
+    $self->_rewrite_regular($date_string);
+    $self->_rewrite_aliases($date_string);
+    $self->_rewrite_conditional($date_string);
+}
 
 sub _rewrite_regular
 {
@@ -12,6 +22,29 @@ sub _rewrite_regular
 
     $$date_string =~ tr/,//d;
     $$date_string =~ s/\s+?(am|pm)\b/$1/i;
+}
+
+sub _rewrite_conditional
+{
+    my $self = shift;
+    my ($date_string) = @_;
+
+    my $rewrite = $self->{data}->{rewrite};
+
+    if ($$date_string =~ $rewrite->{at}{match}) {
+        my $last_token = (split /\s+/, $$date_string)[-1];
+        my @regexes = (
+            (map $self->{data}->__RE($_), qw(time time_am time_pm)),
+            $rewrite->{at}{daytime},
+        );
+        foreach my $regex (@regexes) {
+            if ($last_token =~ $regex) {
+                $$date_string  =~ s/$rewrite->{at}{subst}//;
+                $$date_string .= ':00' if $$date_string =~ /\s+?\d{1,2}$/;
+                last;
+            }
+        }
+    }
 }
 
 sub _rewrite_aliases

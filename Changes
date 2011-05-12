@@ -1,5 +1,27 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.94_04  2011-05-11  <schubiger@cpan.org>
+
+ - New supported format: <monthday> <month> <year> <time am/pm>.
+   [rt #67780 - Colm Dougan]
+
+ - Conditionally rewrite date strings, currently ones with an 'at'
+   followed by a time or daytime (e.g., noon).
+
+ - Place the rewrite data in the grammar class; add an accessor.
+
+ - Adapt the grammar by merging or removing now superfluous entries.
+
+ - Mention rewriting by use of a comment in the grammar class.
+
+ - Rewrite all patterns and refine handling punctuation marks
+   when extracting parsable expressions; add tests.
+
+ - Make generation of time entries for tests capable of processing
+   the {at} placeholder and use it within the test strings.
+
+ - Test parsing of date strings with rewritten time precision.
+
 0.94_03  2011-05-03  <schubiger@cpan.org>
 
  - Rename the aliases class to the more generic name rewrite.

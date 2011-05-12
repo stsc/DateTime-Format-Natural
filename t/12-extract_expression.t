@@ -5,7 +5,7 @@ use warnings;
 
 use DateTime::Format::Natural;
 use DateTime::Format::Natural::Test qw($case_strings);
-use Test::More tests => 13 * 3; # case tests
+use Test::More tests => 33 * 3; # case tests
 
 my @strings = (
     { 'see you next thurs for coffee',                      => [ 'next thu'                                ] },
@@ -23,7 +23,35 @@ my @strings = (
     { 'yesterday to today and today to tomorrow'            => [ 'yesterday to today', 'today to tomorrow' ] },
 );
 
-compare(\@strings);
+my @rewrite = (
+    { '6 am'                  => [ '6am'                ] },
+    { '8 pm'                  => [ '8pm'                ] },
+    { 'yesterday at noon'     => [ 'yesterday noon'     ] },
+    { 'yesterday at midnight' => [ 'yesterday midnight' ] },
+    { 'today at 6 am'         => [ 'today 6am'          ] },
+    { 'today at 8 pm'         => [ 'today 8pm'          ] },
+    { 'tomorrow at 6'         => [ 'tomorrow 6:00'      ] },
+    { 'tomorrow at 20'        => [ 'tomorrow 20:00'     ] },
+);
+
+my @punctuation = (
+    { 'dec 18, 1987'   => [ 'dec 18 1987'      ] },
+    { 'sunday, monday' => [ 'sunday', 'monday' ] },
+    { 'sunday; monday' => [ 'sunday', 'monday' ] },
+    { 'sunday. monday' => [ 'sunday', 'monday' ] },
+    { ',tuesday'       => [ 'tuesday'          ] },
+    { ';tuesday'       => [ 'tuesday'          ] },
+    { '.tuesday'       => [ 'tuesday'          ] },
+    { 'wednesday,'     => [ 'wednesday'        ] },
+    { 'wednesday;'     => [ 'wednesday'        ] },
+    { 'wednesday.'     => [ 'wednesday'        ] },
+    { ' ,thursday'     => [ 'thursday'         ] },
+    { 'thursday, '     => [ 'thursday'         ] },
+);
+
+foreach my $set (\@strings, \@rewrite, \@punctuation) {
+    compare($set);
+}
 
 sub compare
 {

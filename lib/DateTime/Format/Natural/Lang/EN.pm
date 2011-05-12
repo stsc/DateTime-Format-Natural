@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.52';
+our $VERSION = '1.53';
 
 our (%init,
      %timespan,
@@ -31,6 +31,7 @@ our (%init,
      %data_helpers,
      %data_duration,
      %data_aliases,
+     %data_rewrite,
      %extended_checks,
      %grammar);
 
@@ -157,6 +158,14 @@ our (%init,
             d   => 'day',
         },
     );
+
+    %data_rewrite = (
+        at => {
+            match   => qr/\S+? \s+? at \s+? \S+$/ix,
+            subst   => qr/\s+? at \b/ix,
+            daytime => qr/^(?:noon|midnight)$/i,
+        },
+    );
 }
 
 %extended_checks = (
@@ -253,6 +262,12 @@ our (%init,
 #      [ <name of method to dispatch to>, ... ], -----------> declares the worker method(s)
 #      { <shared option>, ... }, ---------------------------> declares shared options (post-processed)
 #    ],
+
+#
+# NOTE: the grammar here does not cover all valid input string
+# variations; see Rewrite.pm for how date strings are rewritten
+# before parsing.
+#
 
 %grammar = (
     now => [
@@ -381,9 +396,9 @@ our (%init,
        ],
     ],
     daytime_noon_midnight_at => [
-       [ 'REGEXP', 'SCALAR', 'REGEXP' ],
+       [ 'REGEXP', 'REGEXP' ],
        [
-         { 0 => qr/^(yesterday)$/i, 1 => 'at', 2 => qr/^(noon)$/i },
+         { 0 => qr/^(yesterday)$/i, 1 => qr/^(noon)$/i },
          [],
          [],
          [
@@ -391,7 +406,7 @@ our (%init,
              { 0 => [ $flag{yes_today_tom} ] },
            ],
            [
-             { 2 => [ $flag{noon_midnight} ] },
+             { 1 => [ $flag{noon_midnight} ] },
            ],
          ],
          [ { unit => 'day' }, {} ],
@@ -399,7 +414,7 @@ our (%init,
          { truncate_to => 'hour' },
        ],
        [
-         { 0 => qr/^(yesterday)$/i, 1 => 'at', 2 => qr/^(midnight)$/i },
+         { 0 => qr/^(yesterday)$/i, 1 => qr/^(midnight)$/i },
          [],
          [],
          [
@@ -407,7 +422,7 @@ our (%init,
              { 0 => [ $flag{yes_today_tom} ] },
            ],
            [
-             { 2 => [ $flag{noon_midnight} ] },
+             { 1 => [ $flag{noon_midnight} ] },
            ],
          ],
          [ { unit => 'day' }, {} ],
@@ -415,7 +430,7 @@ our (%init,
          { truncate_to => 'hour' },
        ],
        [
-         { 0 => qr/^(today)$/i, 1 => 'at', 2 => qr/^(noon)$/i },
+         { 0 => qr/^(today)$/i, 1 => qr/^(noon)$/i },
          [],
          [],
          [
@@ -423,7 +438,7 @@ our (%init,
              { 0 => [ $flag{yes_today_tom} ] },
            ],
            [
-             { 2 => [ $flag{noon_midnight} ] },
+             { 1 => [ $flag{noon_midnight} ] },
            ],
          ],
          [ { unit => 'day' }, {} ],
@@ -431,7 +446,7 @@ our (%init,
          { truncate_to => 'hour' },
        ],
        [
-         { 0 => qr/^(today)$/i, 1 => 'at', 2 => qr/^(midnight)$/i },
+         { 0 => qr/^(today)$/i, 1 => qr/^(midnight)$/i },
          [],
          [],
          [
@@ -439,7 +454,7 @@ our (%init,
              { 0 => [ $flag{yes_today_tom} ] },
            ],
            [
-             { 2 => [ $flag{noon_midnight} ] },
+             { 1 => [ $flag{noon_midnight} ] },
            ],
          ],
          [ { unit => 'day' }, {} ],
@@ -447,7 +462,7 @@ our (%init,
          { truncate_to => 'hour' },
        ],
        [
-         { 0 => qr/^(tomorrow)$/i, 1 => 'at', 2 => qr/^(noon)$/i },
+         { 0 => qr/^(tomorrow)$/i, 1 => qr/^(noon)$/i },
          [],
          [],
          [
@@ -455,7 +470,7 @@ our (%init,
              { 0 => [ $flag{yes_today_tom} ] },
            ],
            [
-             { 2 => [ $flag{noon_midnight} ] },
+             { 1 => [ $flag{noon_midnight} ] },
            ]
          ],
          [ { unit => 'day' }, {} ],
@@ -463,7 +478,7 @@ our (%init,
          { truncate_to => 'hour' },
        ],
        [
-         { 0 => qr/^(tomorrow)$/i, 1 => 'at', 2 => qr/^(midnight)$/i },
+         { 0 => qr/^(tomorrow)$/i, 1 => qr/^(midnight)$/i },
          [],
          [],
          [
@@ -471,7 +486,7 @@ our (%init,
              { 0 => [ $flag{yes_today_tom} ] },
            ],
            [
-             { 2 => [ $flag{noon_midnight} ] },
+             { 1 => [ $flag{noon_midnight} ] },
            ],
          ],
          [ { unit => 'day' }, {} ],
@@ -1340,7 +1355,7 @@ our (%init,
     month_day_year_at => [
        [ 'REGEXP', 'REGEXP', 'REGEXP', 'REGEXP' ],
        [
-         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{year}, 3 => $RE{time} },
+         { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{year}, 3 => $RE{time_min} },
          [ [ 1 ] ],
          [ $extended_checks{ordinal} ],
          [
@@ -1353,7 +1368,7 @@ our (%init,
          ],
          [ {}, { unit => 'year' }, {} ],
          [ '_month_day', '_unit_date', '_time' ],
-         { truncate_to => [qw(hour minute)] },
+         { truncate_to => [qw(minute)] },
        ],
        [
          { 0 => $RE{month}, 1 => $RE{monthday}, 2 => $RE{year}, 3 => $RE{time_am} },
@@ -1441,6 +1456,61 @@ our (%init,
          ],
          [ {}, {} ],
          [ '_month_day', '_at' ],
+         { truncate_to => [qw(hour minute)] },
+       ],
+    ],
+    day_month_year_at => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP', 'REGEXP' ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{year}, 3 => $RE{time_min} },
+         [ [ 0 ] ],
+         [ $extended_checks{ordinal} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [ 2 ],
+           [ 3 ],
+         ],
+         [ {}, { unit => 'year' }, {} ],
+         [ '_month_day', '_unit_date', '_time' ],
+         { truncate_to => [qw(minute)] },
+       ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{year}, 3 => $RE{time_am} },
+         [ [ 0 ], [ 3 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [ 2 ],
+           [
+             { 3 => [ $flag{time_am} ] },
+           ],
+         ],
+         [ {}, { unit => 'year' }, {} ],
+         [ '_month_day', '_unit_date', '_at' ],
+         { truncate_to => [qw(hour minute)] },
+       ],
+       [
+         { 0 => $RE{monthday}, 1 => $RE{month}, 2 => $RE{year}, 3 => $RE{time_pm} },
+         [ [ 0 ], [ 3 ] ],
+         [ $extended_checks{ordinal}, $extended_checks{meridiem} ],
+         [
+           [
+               0,
+             { 1 => [ $flag{month_name}, $flag{month_num} ] },
+           ],
+           [ 2 ],
+           [
+             { 3 => [ $flag{time_pm} ] },
+           ],
+         ],
+         [ {}, { unit => 'year' }, {} ],
+         [ '_month_day', '_unit_date', '_at' ],
          { truncate_to => [qw(hour minute)] },
        ],
     ],
@@ -2565,9 +2635,9 @@ our (%init,
        ],
     ],
     weekday_ago_at_time => [
-       [ 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR', 'SCALAR', 'REGEXP' ],
+       [ 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR', 'REGEXP' ],
        [
-         { 0 => $RE{weekday}, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago', 4 => 'at', 5 => $RE{time} },
+         { 0 => $RE{weekday}, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago', 4 => $RE{time_min} },
          [ [ 1, 2 ] ],
          [ $extended_checks{suffix} ],
          [
@@ -2575,15 +2645,15 @@ our (%init,
            [
              { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
            ],
-           [ 5 ],
+           [ 4 ],
          ],
          [ { unit => 'month' }, {}, {} ],
          [ '_ago_variant', '_weekday', '_time' ],
-         { truncate_to => [qw(hour minute)] },
+         { truncate_to => [qw(minute)] },
        ],
        [
-         { 0 => $RE{weekday}, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago', 4 => 'at', 5 => $RE{time_am} },
-         [ [ 1, 2 ], [ 5 ] ],
+         { 0 => $RE{weekday}, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago', 4 => $RE{time_am} },
+         [ [ 1, 2 ], [ 4 ] ],
          [ $extended_checks{suffix}, $extended_checks{meridiem} ],
          [
            [ 1 ],
@@ -2591,7 +2661,7 @@ our (%init,
              { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
            ],
            [
-             { 5 => [ $flag{time_am} ] },
+             { 4 => [ $flag{time_am} ] },
            ],
          ],
          [ { unit => 'month' }, {}, {} ],
@@ -2599,8 +2669,8 @@ our (%init,
          { truncate_to => [qw(hour minute)] },
        ],
        [
-         { 0 => $RE{weekday}, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago', 4 => 'at', 5 => $RE{time_pm} },
-         [ [ 1, 2 ], [ 5 ] ],
+         { 0 => $RE{weekday}, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago', 4 => $RE{time_pm} },
+         [ [ 1, 2 ], [ 4 ] ],
          [ $extended_checks{suffix}, $extended_checks{meridiem} ],
          [
            [ 1 ],
@@ -2608,7 +2678,7 @@ our (%init,
              { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
            ],
            [
-             { 5 => [ $flag{time_pm} ] },
+             { 4 => [ $flag{time_pm} ] },
            ],
          ],
          [ { unit => 'month' }, {}, {} ],
@@ -2864,9 +2934,9 @@ our (%init,
        ],
     ],
     variant_weekday_at_time => [
-       [ 'REGEXP', 'REGEXP', 'SCALAR', 'REGEXP' ],
+       [ 'REGEXP', 'REGEXP', 'REGEXP' ],
        [
-         { 0 => qr/^(next)$/i, 1 => $RE{weekday}, 2 => 'at', 3 => $RE{time} },
+         { 0 => qr/^(next)$/i, 1 => $RE{weekday}, 2 => $RE{time} },
          [],
          [],
          [
@@ -2874,14 +2944,14 @@ our (%init,
              { 0 => [ $flag{last_this_next} ] },
              { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
            ],
-           [ 3 ],
+           [ 2 ],
          ],
          [ {}, {} ],
          [ '_count_day_variant_week', '_time' ],
          { truncate_to => [qw(hour minute)] },
        ],
        [
-         { 0 => qr/^(this)$/i, 1 => $RE{weekday}, 2 => 'at', 3 => $RE{time} },
+         { 0 => qr/^(this)$/i, 1 => $RE{weekday}, 2 => $RE{time} },
          [],
          [],
          [
@@ -2889,14 +2959,14 @@ our (%init,
              { 0 => [ $flag{last_this_next} ] },
              { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
            ],
-           [ 3 ],
+           [ 2 ],
          ],
          [ {}, {} ],
          [ '_count_day_variant_week', '_time' ],
          { truncate_to => [qw(hour minute)] },
        ],
        [
-         { 0 => qr/^(last)$/i, 1 => $RE{weekday}, 2 => 'at', 3 => $RE{time} },
+         { 0 => qr/^(last)$/i, 1 => $RE{weekday}, 2 => $RE{time} },
          [],
          [],
          [
@@ -2904,7 +2974,7 @@ our (%init,
              { 0 => [ $flag{last_this_next} ] },
              { 1 => [ $flag{weekday_name}, $flag{weekday_num} ] },
            ],
-           [ 3 ],
+           [ 2 ],
          ],
          [ {}, {} ],
          [ '_count_day_variant_week', '_time' ],
@@ -3375,7 +3445,7 @@ our (%init,
          { truncate_to => 'hour' },
        ],
     ],
-    day_am_pm => [
+    day_at => [
        [ 'REGEXP', 'REGEXP' ],
        [
          { 0 => qr/^(yesterday)$/i, 1 => $RE{time} },
@@ -3516,157 +3586,6 @@ our (%init,
          { truncate_to => [qw(hour minute)] },
        ],
     ],
-    day_time => [
-       [ 'REGEXP', 'SCALAR', 'REGEXP' ],
-       [
-         { 0 => qr/^(yesterday)$/i, 1 => 'at', 2 => $RE{time} },
-         [],
-         [],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [ 2 ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_time' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-       [
-         { 0 => qr/^(today)$/i, 1 => 'at', 2 => $RE{time} },
-         [],
-         [],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [ 2 ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_time' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-       [
-         { 0 => qr/^(tomorrow)$/i, 1 => 'at', 2 => $RE{time} },
-         [],
-         [],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [ 2 ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_time' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-       [
-         { 0 => qr/^(yesterday)$/i, 1 => 'at', 2 => $RE{time_am} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [
-             { 2 => [ $flag{time_am} ] },
-           ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_at' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-       [
-         { 0 => qr/^(today)$/i, 1 => 'at', 2 => $RE{time_am} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [
-             { 2 => [ $flag{time_am} ] },
-           ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_at' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-       [
-         { 0 => qr/^(tomorrow)$/i, 1 => 'at', 2 => $RE{time_am} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [
-             { 2 => [ $flag{time_am} ] },
-           ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_at' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-    ],
-    weekday_at_time => [
-       [ 'REGEXP', 'SCALAR', 'REGEXP' ],
-       [
-         { 0 => $RE{weekday}, 1 => 'at', 2 => $RE{time} },
-         [],
-         [],
-         [
-           [
-             { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
-           ],
-           [ 2 ],
-         ],
-         [ {}, {} ],
-         [ '_weekday', '_time' ],
-         {
-           prefer_future => true,
-           truncate_to   => [qw(hour minute)],
-         },
-       ],
-       [
-         { 0 => $RE{weekday}, 1 => 'at', 2 => $RE{time_am} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
-           ],
-           [
-             { 2 => [ $flag{time_am} ] },
-           ],
-         ],
-         [ {}, {} ],
-         [ '_weekday', '_at' ],
-         {
-           prefer_future => true,
-           truncate_to   => [qw(hour minute)],
-         },
-       ],
-       [
-         { 0 => $RE{weekday}, 1 => 'at', 2 => $RE{time_pm} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{weekday_name}, $flag{weekday_num} ] },
-           ],
-           [
-             { 2 => [ $flag{time_pm} ] },
-           ],
-         ],
-         [ {}, {} ],
-         [ '_weekday', '_at' ],
-         {
-           prefer_future => true,
-           truncate_to   => [qw(hour minute)],
-         },
-       ],
-    ],
     time_on_weekday => [
        [ 'REGEXP', 'SCALAR', 'REGEXP' ],
        [
@@ -3723,57 +3642,6 @@ our (%init,
            prefer_future => true,
            truncate_to   => [qw(hour minute)],
          },
-       ],
-    ],
-    day_at_pm => [
-       [ 'REGEXP', 'SCALAR', 'REGEXP' ],
-       [
-         { 0 => qr/^(yesterday)$/i, 1 => 'at', 2 => $RE{time_pm} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [
-             { 2 => [ $flag{time_pm} ] },
-           ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_at' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-       [
-         { 0 => qr/^(today)$/i, 1 => 'at', 2 => $RE{time_pm} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [
-             { 2 => [ $flag{time_pm} ] },
-           ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_at' ],
-         { truncate_to => [qw(hour minute)] },
-       ],
-       [
-         { 0 => qr/^(tomorrow)$/i, 1 => 'at', 2 => $RE{time_pm} },
-         [ [ 2 ] ],
-         [ $extended_checks{meridiem} ],
-         [
-           [
-             { 0 => [ $flag{yes_today_tom} ] },
-           ],
-           [
-             { 2 => [ $flag{time_pm} ] },
-           ],
-         ],
-         [ { unit => 'day' }, {} ],
-         [ '_unit_variant', '_at' ],
-         { truncate_to => [qw(hour minute)] },
        ],
     ],
     day_month_year => [

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Natural;
-use Test::More tests => 12;
+use Test::More tests => 17;
 
 my @ordinal_number = (
     '2d aug',
@@ -30,7 +30,16 @@ my @formatted = (
     '2011-Jan-04',
 );
 
-foreach my $list (\@ordinal_number, \@durations, \@filtered, \@formatted) {
+my @rewrite = (
+    # \d{1,2}$ -> \d{1,2}:00$
+    'feb 28 at 3',
+    '28 feb at 3',
+    'may 22nd 2011 at 9',
+    '22nd may 2011 at 9',
+    'saturday 3 months ago at 5',
+);
+
+foreach my $list (\@ordinal_number, \@durations, \@filtered, \@formatted, \@rewrite) {
     check($list);
 }
 

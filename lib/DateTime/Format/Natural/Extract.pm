@@ -5,16 +5,27 @@ use warnings;
 use base qw(DateTime::Format::Natural::Formatted);
 use boolean qw(true false);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub _extract_expressions
 {
     my $self = shift;
     my ($extract_string) = @_;
 
-    $extract_string =~ s/(?=[,;.])/ /g; # pretend punctuation marks are tokens
+    $extract_string =~ s/^\s*[,;.]?//;
+    $extract_string =~ s/[,;.]?\s*$//;
 
-    $self->_rewrite_aliases(\$extract_string);
+    while (my ($mark) = $extract_string =~ /([,;.])/cg) {
+        my %patterns = (
+            ',' => qr/(?!\d{4})/,
+            ';' => qr/(?=\w)/,
+            '.' => qr/(?=\w)/,
+        );
+        my $pattern = $patterns{$mark};
+        $extract_string =~ s/\Q$mark\E \s+? $pattern/ [token] /x; # pretend punctuation marks are tokens
+    }
+
+    $self->_rewrite(\$extract_string);
 
     my @tokens = split /\s+/, $extract_string;
     my %entries = %{$self->{data}->__grammar('')};
