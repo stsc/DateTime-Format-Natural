@@ -31,11 +31,7 @@ my $build = Module::Build->new
                        'Test::MockTime' => 0,
                        'Test::More' => 0,
                      },
-   recommends => {
-                   'Date::Calc' => 0,
-                   'Test::Pod' => '1.14',
-                   'Test::Pod::Coverage' => '1.04',
-                 },
+   recommends => { 'Date::Calc' => 0 },
    script_files => [ 'scripts/dateparse' ],
    license => 'perl',
    create_readme => 1,

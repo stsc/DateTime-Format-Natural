@@ -14,7 +14,7 @@ use Test::More;
 our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings, $time_entries);
 my @set;
 
-$VERSION = '0.09';
+$VERSION = '0.10';
 
 @set         =  qw(%time $case_strings $time_entries _run_tests _result_string _message);
 @EXPORT_OK   = (qw(_find_modules _find_files), @set);
@@ -45,7 +45,7 @@ $time_entries = sub
                 }
             }
             if ($str =~ /\{at\}/) {
-                push @strings, $str unless @strings;
+                @strings = ($str) unless @strings;
                 my @strings_new;
                 foreach my $string (@strings) {
                     foreach my $at ('', ' at') {

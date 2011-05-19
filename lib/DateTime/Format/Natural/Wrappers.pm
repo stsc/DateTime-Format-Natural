@@ -3,7 +3,7 @@ package DateTime::Format::Natural::Wrappers;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub _add
 {
@@ -22,7 +22,7 @@ sub _math
     my $self = shift;
     my ($unit, $value) = @_;
 
-    my ($method) = (caller(1))[3] =~ /.*::(.*)$/;
+    my ($method) = (caller(1))[3] =~ /.+::(.+)$/;
     $method =~ s/^_//;
 
     $unit .= 's' unless $unit =~ /s$/;

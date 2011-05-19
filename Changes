@@ -1,5 +1,14 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.95_01  2011-05-19  <schubiger@cpan.org>
+
+ - Do no longer recommend Test::Pod and Test::Pod::Coverage.
+
+ - Use quantifier which matches 1 or more times when extracting
+   subroutine or method names.
+
+ - Assign a list instead of pushing a string for time entries.
+
 0.95  2011-05-14  <schubiger@cpan.org>
 
  - Merged development version to stable.
