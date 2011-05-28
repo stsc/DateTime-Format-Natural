@@ -39,14 +39,19 @@ my @rewrite = (
     'saturday 3 months ago at 5',
 );
 
-foreach my $list (\@ordinal_number, \@durations, \@filtered, \@formatted, \@rewrite) {
+foreach my $list (\@ordinal_number,
+                  \@durations,
+                  \@filtered,
+                  \@formatted,
+                  \@rewrite)
+{
     check($list);
 }
 
 sub check
 {
-    my $aref = shift;
-    foreach my $string (@$aref) {
+    my $list = shift;
+    foreach my $string (@$list) {
         check_success($string);
     }
 }

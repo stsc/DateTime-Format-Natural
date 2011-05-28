@@ -5,7 +5,7 @@ use warnings;
 use base qw(DateTime::Format::Natural::Formatted);
 use boolean qw(true false);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub _extract_expressions
 {
@@ -42,31 +42,35 @@ sub _extract_expressions
         my $date_index;
         for (my $i = 0; $i < @tokens; $i++) {
             next if $skip{$i};
-            my ($formatted) = $tokens[$i] =~ $self->{data}->__regexes('format');
-            my %count = $self->_count_separators($formatted);
-            if ($self->_check_formatted('ymd', \%count)) {
-                $date_index = $i;
-                $skip{$i} = true;
+            if ($self->_check_for_date($tokens[$i], $i, \$date_index)) {
                 last;
             }
         }
         OUTER:
-        foreach my $keyword (sort { $lengths{$b} <=> $lengths{$a} } keys %entries) {
+        foreach my $keyword (sort { $lengths{$b} <=> $lengths{$a} } grep { $lengths{$_} <= @tokens } keys %entries) {
             my @grammar = @{$entries{$keyword}};
             my $types = shift @grammar;
             my $pos = 0;
             my @indexes;
-            for (my $i = 0; $i < @tokens; $i++) {
-                next if $skip{$i};
-                last unless defined $types->[$pos];
-                foreach my $expression (@grammar) {
-                    my $definition = $expression->[0];
+            my $date_index;
+            foreach my $expression (@grammar) {
+                my $definition = $expression->[0];
+                my $matched = false;
+                for (my $i = 0; $i < @tokens; $i++) {
+                    next if $skip{$i};
+                    last unless defined $types->[$pos];
+                    if ($self->_check_for_date($tokens[$i], $i, \$date_index)) {
+                        next;
+                    }
                     if ($types->[$pos] eq 'SCALAR' && defined $definition->{$pos} && $tokens[$i] =~ /^$definition->{$pos}$/i
                      or $types->[$pos] eq 'REGEXP'                                && $tokens[$i] =~   $definition->{$pos}
                     && (@indexes ? ($i - $indexes[-1] == 1) : true)
                     ) {
+                        $matched = true;
                         push @indexes, $i;
                         $pos++;
+                    }
+                    elsif ($matched) {
                         last;
                     }
                 }
@@ -76,7 +80,7 @@ sub _extract_expressions
                     my $expression = join ' ', (defined $date_index ? $tokens[$date_index] : (), @tokens[@indexes]);
                     my $start_index = defined $date_index ? $indexes[0] - 1 : $indexes[0];
                     push @expressions, [ [ $start_index, $indexes[-1] ], $expression ];
-                    $skip{$_} = true foreach @indexes;
+                    $skip{$_} = true foreach (defined $date_index ? $date_index : (), @indexes);
                     $seen_expression = true;
                     last OUTER;
                 }
@@ -84,6 +88,7 @@ sub _extract_expressions
         }
         if (defined $date_index && !$seen_expression) {
             push @expressions, [ [ ($date_index) x 2 ], $tokens[$date_index] ];
+            $skip{$date_index} = true;
             $seen_expression = true;
         }
     } while ($seen_expression);
@@ -124,6 +129,22 @@ sub _finalize_expressions
     my $exclude = sub { $_[0] =~ /^\d{1,2}$/ };
 
     return grep !$exclude->($_), @final_expressions;
+}
+
+sub _check_for_date
+{
+    my $self = shift;
+    my ($token, $index, $date_index) = @_;
+
+    my ($formatted) = $token =~ $self->{data}->__regexes('format');
+    my %count = $self->_count_separators($formatted);
+    if ($self->_check_formatted('ymd', \%count)) {
+        $$date_index = $index;
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 1;

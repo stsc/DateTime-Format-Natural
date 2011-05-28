@@ -19,7 +19,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.95_01';
+our $VERSION = '0.95_02';
 
 validation_options(
     on_fail => sub
@@ -51,7 +51,7 @@ sub _init
     my %presets = (
         lang          => 'en',
         format        => 'd/m/y',
-        prefer_future => false,
+        prefer_future =>  false,
         time_zone     => 'floating',
     );
     foreach my $opt (keys %presets) {

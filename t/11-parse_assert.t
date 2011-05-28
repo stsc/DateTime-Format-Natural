@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(true false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 6;
+use Test::More tests => 9;
 
 {
     # Assert for prefixed dates that an extracted unit which is
@@ -53,4 +53,23 @@ use Test::More tests => 6;
     $parser = DateTime::Format::Natural->new;
     $parser->parse_datetime('2011-j6n-04');
     ok(!$parser->success && !$warnings, 'formatted date with non-letter in month name');
+}
+
+{
+    # Assert that extract_datetime() returns expressions depending on context.
+    my $parser = DateTime::Format::Natural->new;
+    my $string = 'monday until friday';
+    my $expression = $parser->extract_datetime($string);
+    is($expression, 'monday', 'extract_datetime scalar');
+    my @expressions = $parser->extract_datetime($string);
+    is_deeply(\@expressions, [qw(monday friday)], 'extract_datetime list');
+}
+
+{
+    # Assert that extract_datetime() looping through a grammar entry does not
+    # match in more than one subentry for all tokens (previously broken for
+    # this input string with the weekday_time grammar entry, at least).
+    my $parser = DateTime::Format::Natural->new;
+    my @expressions = $parser->extract_datetime('8am 4pm');
+    is_deeply(\@expressions, [qw(8am 4pm)], 'extract with single grammar subentry');
 }

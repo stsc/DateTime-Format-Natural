@@ -1,5 +1,17 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.95_02  2011-05-28  <schubiger@cpan.org>
+
+ - Reorder the nested extract loop iterating through the grammar
+   entries to process only one subentry for all matching tokens.
+
+ - Move the check for a date when extracting expressions to a method.
+
+ - Add assert tests for extract_datetime(): one for the context
+   dependant return and another for the nested extract loop fix.
+
+ - Improve code visually of the parse success and failure test files.
+
 0.95_01  2011-05-19  <schubiger@cpan.org>
 
  - Do no longer recommend Test::Pod and Test::Pod::Coverage.

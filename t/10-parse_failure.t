@@ -358,16 +358,19 @@ my @ordinal_number = ($errors{ordinal_number},
     '22rd may 2011 9:35pm',
 ]);
 
-check(\@with_suffix);
-check(\@without_suffix);
-check(\@meridiem_exceeds);
-check(\@meridiem_zero);
-check(\@ordinal_number);
+foreach my $list (\@with_suffix,
+                  \@without_suffix,
+                  \@meridiem_exceeds,
+                  \@meridiem_zero,
+                  \@ordinal_number)
+{
+    check($list);
+}
 
 sub check
 {
-    my $aref = shift;
-    my ($error, $checks) = @$aref;
+    my $list = shift;
+    my ($error, $checks) = @$list;
     foreach my $string (@$checks) {
         check_fail($error, $string);
     }
