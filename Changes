@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.95_03  2011-05-30  <schubiger@cpan.org>
+
+ - Add the extract switch to dateparse and document it.
+
+ - Change dateparse's prefer_future option to be not negatable.
+
 0.95_02  2011-05-28  <schubiger@cpan.org>
 
  - Reorder the nested extract loop iterating through the grammar

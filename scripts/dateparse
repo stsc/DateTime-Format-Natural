@@ -11,6 +11,7 @@ use Term::ReadLine;
 use constant LANG_DEFAULT => 'en';
 
 my %args;
+my $extract;
 my $lang;
 my @supported_languages = qw(en);
 my $trace;
@@ -26,10 +27,11 @@ my %valid_languages = map { $_ => true } @supported_languages;
 sub parse_switches
 {
     my %opts;
-    GetOptions(\%opts, qw(f|format=s
+    GetOptions(\%opts, qw(e|extract
+                          f|format=s
                           h|help
                           l|lang=s
-                          p|prefer_future!
+                          p|prefer_future
                           s|supported
                           t|time_zone=s
                           T|trace
@@ -46,8 +48,9 @@ sub set_values
 {
     my $opts = shift;
 
-    $lang  = $opts->{l} || LANG_DEFAULT;
-    $trace = $opts->{T} || false;
+    $extract = $opts->{e} || false;
+    $lang    = $opts->{l} || LANG_DEFAULT;
+    $trace   = $opts->{T} || false;
 
     my %table = (
         l => 'lang',
@@ -67,6 +70,7 @@ sub usage
 {
     print <<USAGE;
 Usage: $0 [switches]
+   -e, --extract               extract expressions
    -f, --format=<format>       format of numeric dates
    -h, --help                  this help screen
    -l, --lang=<code>           language code
@@ -119,19 +123,25 @@ EOT
             next;
         }
 
-        my @dt = $parser->parse_datetime_duration(string => $input);
-        my @traces = $parser->trace;
+        my @expressions = $extract ? $parser->extract_datetime($input) : ($input);
 
-        if ($parser->success) {
-            foreach my $dt (@dt) {
-                printf("%02d.%02d.%4d %02d:%02d:%02d\n", map $dt->$_, qw(day month year hour min sec));
-                if ($trace && @traces) {
-                    print shift @traces, "\n";
+        warn "no parsable expressions extracted\n" unless @expressions;
+
+        foreach my $expression (@expressions) {
+            my @dt = $parser->parse_datetime_duration(string => $expression);
+            my @traces = $parser->trace;
+
+            if ($parser->success) {
+                foreach my $dt (@dt) {
+                    printf("%02d.%02d.%4d %02d:%02d:%02d\n", map $dt->$_, qw(day month year hour min sec));
+                    if ($trace && @traces) {
+                        print shift @traces, "\n";
+                    }
                 }
             }
-        }
-        else {
-            warn $parser->error, "\n";
+            else {
+                warn $parser->error, "\n";
+            }
         }
     }
 }
@@ -143,6 +153,7 @@ dateparse - frontend to DateTime::Format::Natural
 =head1 SYNOPSIS
 
  Usage: dateparse [switches]
+   -e, --extract               extract expressions
    -f, --format=<format>       format of numeric dates
    -h, --help                  this help screen
    -l, --lang=<code>           language code
