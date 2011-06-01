@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.96  2011-06-01  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 0.95_03  2011-05-30  <schubiger@cpan.org>
 
  - Add the extract switch to dateparse and document it.
