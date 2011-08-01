@@ -1,5 +1,17 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.96_01  2011-08-01  <schubiger@cpan.org>
+
+ - New supported format: today <count> <unit> ago. [Xiao Yafeng]
+
+ - Truncate for this and other ago formats to day if there is
+   no time component in order to produce more consistent results.
+
+ - Add new and adjust existing regular tests for these formats;
+   moreover, complete the list of parse failure tests.
+
+ - List the added grammar in the documentation.
+
 0.96  2011-06-01  <schubiger@cpan.org>
 
  - Merged development version to stable.

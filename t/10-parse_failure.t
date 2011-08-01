@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 323;
+use Test::More tests => 337;
 
 my %errors = (
     with_suffix      => qr/suffix 's' without plural/,
@@ -31,6 +31,13 @@ my @with_suffix = ($errors{with_suffix},
     'tomorrow 1 weeks ago',
     'tomorrow 1 months ago',
     'tomorrow 1 years ago',
+    'today 1 seconds ago',
+    'today 1 minutes ago',
+    'today 1 hours ago',
+    'today 1 days ago',
+    'today 1 weeks ago',
+    'today 1 months ago',
+    'today 1 years ago',
     'yesterday 1 seconds ago',
     'yesterday 1 minutes ago',
     'yesterday 1 hours ago',
@@ -88,6 +95,13 @@ my @without_suffix = ($errors{without_suffix},
     'tomorrow 2 week ago',
     'tomorrow 2 month ago',
     'tomorrow 2 year ago',
+    'today 2 second ago',
+    'today 2 minute ago',
+    'today 2 hour ago',
+    'today 2 day ago',
+    'today 2 week ago',
+    'today 2 month ago',
+    'today 2 year ago',
     'yesterday 2 second ago',
     'yesterday 2 minute ago',
     'yesterday 2 hour ago',

@@ -1,6 +1,6 @@
 ---
 name: DateTime-Format-Natural
-version: 0.96
+version: 0.96_01
 author:
   - 'Steven Schubiger <schubiger@cpan.org>'
 abstract: Create machine readable date/time with natural parsing logic
@@ -33,7 +33,7 @@ configure_requires:
 provides:
   DateTime::Format::Natural:
     file: lib/DateTime/Format/Natural.pm
-    version: 0.96
+    version: 0.96_01
   DateTime::Format::Natural::Calc:
     file: lib/DateTime/Format/Natural/Calc.pm
     version: 1.38
@@ -60,7 +60,7 @@ provides:
     version: 1.08
   DateTime::Format::Natural::Lang::EN:
     file: lib/DateTime/Format/Natural/Lang/EN.pm
-    version: 1.53
+    version: 1.54
   DateTime::Format::Natural::Rewrite:
     file: lib/DateTime/Format/Natural/Rewrite.pm
     version: 0.05

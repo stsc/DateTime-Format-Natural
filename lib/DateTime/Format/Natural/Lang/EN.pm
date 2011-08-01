@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.53';
+our $VERSION = '1.54';
 
 our (%init,
      %timespan,
@@ -2402,7 +2402,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'day' } ],
          [ '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(weeks?)$/i, 2 => 'ago' },
@@ -2411,7 +2411,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'week' } ],
          [ '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(months?)$/i, 2 => 'ago' },
@@ -2420,7 +2420,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'month' } ],
          [ '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(years?)$/i, 2 => 'ago' },
@@ -2429,7 +2429,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'year' } ],
          [ '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
     ],
     ago_tomorrow => [
@@ -2488,7 +2488,7 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'day' } ],
          [ '_unit_variant', '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => qr/^(tomorrow)$/i, 1 => $RE{number}, 2 => qr/^(weeks?)$/i, 3 => 'ago' },
@@ -2502,7 +2502,7 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'week' } ],
          [ '_unit_variant', '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => qr/^(tomorrow)$/i, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago' },
@@ -2516,7 +2516,7 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'month' } ],
          [ '_unit_variant', '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => qr/^(tomorrow)$/i, 1 => $RE{number}, 2 => qr/^(years?)$/i, 3 => 'ago' },
@@ -2530,7 +2530,108 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'year' } ],
          [ '_unit_variant', '_ago_variant' ],
+         { truncate_to => 'day' },
+       ],
+    ],
+    ago_today => [
+       [ 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR' ],
+       [
+         { 0 => qr/^(today)$/i, 1 => $RE{number}, 2 => qr/^(seconds?)$/i, 3 => 'ago' },
+         [ [ 1, 2 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+             { 0 => [ $flag{yes_today_tom} ] },
+           ],
+           [ 1 ],
+         ],
+         [ { unit => 'day' }, { unit => 'second' } ],
+         [ '_unit_variant', '_ago_variant' ],
          {},
+       ],
+       [
+         { 0 => qr/^(today)$/i, 1 => $RE{number}, 2 => qr/^(minutes?)$/i, 3 => 'ago' },
+         [ [ 1, 2 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+             { 0 => [ $flag{yes_today_tom} ] },
+           ],
+           [ 1 ],
+         ],
+         [ { unit => 'day' }, { unit => 'minute' } ],
+         [ '_unit_variant', '_ago_variant' ],
+         {},
+       ],
+       [
+         { 0 => qr/^(today)$/i, 1 => $RE{number}, 2 => qr/^(hours?)$/i, 3 => 'ago' },
+         [ [ 1, 2 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+             { 0 => [ $flag{yes_today_tom} ] },
+           ],
+           [ 1 ],
+         ],
+         [ { unit => 'day' }, { unit => 'hour' } ],
+         [ '_unit_variant', '_ago_variant' ],
+         {},
+       ],
+       [
+         { 0 => qr/^(today)$/i, 1 => $RE{number}, 2 => qr/^(days?)$/i, 3 => 'ago' },
+         [ [ 1, 2 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+             { 0 => [ $flag{yes_today_tom} ] },
+           ],
+           [ 1 ],
+         ],
+         [ { unit => 'day' }, { unit => 'day' } ],
+         [ '_unit_variant', '_ago_variant' ],
+         { truncate_to => 'day' },
+       ],
+       [
+         { 0 => qr/^(today)$/i, 1 => $RE{number}, 2 => qr/^(weeks?)$/i, 3 => 'ago' },
+         [ [ 1, 2 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+             { 0 => [ $flag{yes_today_tom} ] },
+           ],
+           [ 1 ],
+         ],
+         [ { unit => 'day' }, { unit => 'week' } ],
+         [ '_unit_variant', '_ago_variant' ],
+         { truncate_to => 'day' },
+       ],
+       [
+         { 0 => qr/^(today)$/i, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago' },
+         [ [ 1, 2 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+             { 0 => [ $flag{yes_today_tom} ] },
+           ],
+           [ 1 ],
+         ],
+         [ { unit => 'day' }, { unit => 'month' } ],
+         [ '_unit_variant', '_ago_variant' ],
+         { truncate_to => 'day' },
+       ],
+       [
+         { 0 => qr/^(today)$/i, 1 => $RE{number}, 2 => qr/^(years?)$/i, 3 => 'ago' },
+         [ [ 1, 2 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+             { 0 => [ $flag{yes_today_tom} ] },
+           ],
+           [ 1 ],
+         ],
+         [ { unit => 'day' }, { unit => 'year' } ],
+         [ '_unit_variant', '_ago_variant' ],
+         { truncate_to => 'day' },
        ],
     ],
     ago_yesterday => [
@@ -2589,7 +2690,7 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'day' } ],
          [ '_unit_variant', '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => qr/^(yesterday)$/i, 1 => $RE{number}, 2 => qr/^(weeks?)$/i, 3 => 'ago' },
@@ -2603,7 +2704,7 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'week' } ],
          [ '_unit_variant', '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => qr/^(yesterday)$/i, 1 => $RE{number}, 2 => qr/^(months?)$/i, 3 => 'ago' },
@@ -2617,7 +2718,7 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'month' } ],
          [ '_unit_variant', '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
        [
          { 0 => qr/^(yesterday)$/i, 1 => $RE{number}, 2 => qr/^(years?)$/i, 3 => 'ago' },
@@ -2631,7 +2732,7 @@ our (%init,
          ],
          [ { unit => 'day' }, { unit => 'year' } ],
          [ '_unit_variant', '_ago_variant' ],
-         {},
+         { truncate_to => 'day' },
        ],
     ],
     weekday_ago_at_time => [
@@ -4060,6 +4161,13 @@ times are also parsable with precision in seconds):
  yesterday 7 weeks ago
  yesterday 7 months ago
  yesterday 7 years ago
+ today 5 seconds ago
+ today 5 minutes ago
+ today 5 hours ago
+ today 5 days ago
+ today 5 weeks ago
+ today 5 months ago
+ today 5 years ago
  tomorrow 3 seconds ago
  tomorrow 3 minutes ago
  tomorrow 3 hours ago
