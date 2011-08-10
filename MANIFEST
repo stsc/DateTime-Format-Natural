@@ -17,6 +17,7 @@ lib/DateTime/Format/Natural/Utils.pm
 lib/DateTime/Format/Natural/Wrappers.pm
 Makefile.PL
 MANIFEST			This list of files
+META.json
 META.yml
 README
 scripts/dateparse

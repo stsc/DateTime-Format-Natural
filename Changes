@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.96_02  2011-08-10  <schubiger@cpan.org>
+
+ - Revert truncating of <count> <unit> ago formats.
+
+ - Add Xiao Yafeng to credits.
+
 0.96_01  2011-08-01  <schubiger@cpan.org>
 
  - New supported format: today <count> <unit> ago. [Xiao Yafeng]

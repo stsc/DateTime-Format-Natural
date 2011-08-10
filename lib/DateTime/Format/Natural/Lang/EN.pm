@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.54';
+our $VERSION = '1.55';
 
 our (%init,
      %timespan,
@@ -2402,7 +2402,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'day' } ],
          [ '_ago_variant' ],
-         { truncate_to => 'day' },
+         {},
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(weeks?)$/i, 2 => 'ago' },
@@ -2411,7 +2411,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'week' } ],
          [ '_ago_variant' ],
-         { truncate_to => 'day' },
+         {},
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(months?)$/i, 2 => 'ago' },
@@ -2420,7 +2420,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'month' } ],
          [ '_ago_variant' ],
-         { truncate_to => 'day' },
+         {},
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(years?)$/i, 2 => 'ago' },
@@ -2429,7 +2429,7 @@ our (%init,
          [ [ 0 ] ],
          [ { unit => 'year' } ],
          [ '_ago_variant' ],
-         { truncate_to => 'day' },
+         {},
        ],
     ],
     ago_tomorrow => [
