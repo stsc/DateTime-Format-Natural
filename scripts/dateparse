@@ -27,7 +27,8 @@ my %valid_languages = map { $_ => true } @supported_languages;
 sub parse_switches
 {
     my %opts;
-    GetOptions(\%opts, qw(e|extract
+    GetOptions(\%opts, qw(d|datetime=s
+                          e|extract
                           f|format=s
                           h|help
                           l|lang=s
@@ -52,7 +53,37 @@ sub set_values
     $lang    = $opts->{l} || LANG_DEFAULT;
     $trace   = $opts->{T} || false;
 
+    if (exists $opts->{d}) {
+        local $_ = $opts->{d};
+        my ($got_date, $got_time) = (false) x 2;
+        my $ignore = false;
+        my %time;
+        if (/^(\d{4}-\d{2}-\d{2})\b/) {
+            @time{qw(year month day)} = split /-/, $1;
+            $got_date = true;
+        }
+        if (/\b(\d{2}:\d{2}:\d{2})$/) {
+            @time{qw(hour minute second)} = split /:/, $1;
+            $got_time = true;
+        }
+        if ($got_date || $got_time) {
+            if (!$got_date) { # time only
+                my @units = qw(year month day);
+                @time{@units} = map DateTime->now->$_, @units;
+            }
+            eval { $opts->{d} = DateTime->new(%time) } or $ignore = true;
+        }
+        else {
+            $ignore = true;
+        }
+        if ($ignore) {
+            warn "ignoring invalid datetime string '$opts->{d}'\n";
+            delete $opts->{d};
+        }
+    }
+
     my %table = (
+        d => 'datetime',
         l => 'lang',
         f => 'format',
         p => 'prefer_future',
@@ -70,6 +101,7 @@ sub usage
 {
     print <<USAGE;
 Usage: $0 [switches]
+   -d, --datetime=<string>     datetime string
    -e, --extract               extract expressions
    -f, --format=<format>       format of numeric dates
    -h, --help                  this help screen
@@ -133,7 +165,7 @@ EOT
 
             if ($parser->success) {
                 foreach my $dt (@dt) {
-                    printf("%02d.%02d.%4d %02d:%02d:%02d\n", map $dt->$_, qw(day month year hour min sec));
+                    printf("%4d-%02d-%02d %02d:%02d:%02d\n", map $dt->$_, qw(year month day hour min sec));
                     if ($trace && @traces) {
                         print shift @traces, "\n";
                     }
@@ -153,6 +185,7 @@ dateparse - frontend to DateTime::Format::Natural
 =head1 SYNOPSIS
 
  Usage: dateparse [switches]
+   -d, --datetime=<string>     datetime string
    -e, --extract               extract expressions
    -f, --format=<format>       format of numeric dates
    -h, --help                  this help screen

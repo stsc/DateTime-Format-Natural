@@ -22,7 +22,7 @@ name: DateTime-Format-Natural
 provides:
   DateTime::Format::Natural:
     file: lib/DateTime/Format/Natural.pm
-    version: 0.96_02
+    version: 0.96_03
   DateTime::Format::Natural::Calc:
     file: lib/DateTime/Format/Natural/Calc.pm
     version: 1.38
@@ -77,4 +77,4 @@ requires:
   boolean: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.96_02
+version: 0.96_03

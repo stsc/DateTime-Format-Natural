@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.96_03  2011-08-13  <schubiger@cpan.org>
+
+ - Add the datetime switch to dateparse and document it.
+
+ - Print dateparse's dates formatted according to ISO 8601.
+
 0.96_02  2011-08-10  <schubiger@cpan.org>
 
  - Revert truncating of <count> <unit> ago formats.
