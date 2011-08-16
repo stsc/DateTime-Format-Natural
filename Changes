@@ -1,5 +1,12 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.96_04  2011-08-16  <schubiger@cpan.org>
+
+ - Check that the datetime string for dateparse has at most
+   two chunks (date/time); also require DateTime.
+
+ - Elaborate on the format of dateparse's datetime string.
+
 0.96_03  2011-08-13  <schubiger@cpan.org>
 
  - Add the datetime switch to dateparse and document it.

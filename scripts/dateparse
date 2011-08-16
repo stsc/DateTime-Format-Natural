@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use boolean qw(true false);
 
+use DateTime;
 use DateTime::Format::Natural;
 use Getopt::Long qw(:config no_auto_abbrev no_ignore_case);
 use Term::ReadLine;
@@ -58,13 +59,15 @@ sub set_values
         my ($got_date, $got_time) = (false) x 2;
         my $ignore = false;
         my %time;
-        if (/^(\d{4}-\d{2}-\d{2})\b/) {
-            @time{qw(year month day)} = split /-/, $1;
-            $got_date = true;
-        }
-        if (/\b(\d{2}:\d{2}:\d{2})$/) {
-            @time{qw(hour minute second)} = split /:/, $1;
-            $got_time = true;
+        if (/^\S+? (?:\s+? \S+?)?$/x) {
+            if (/^(\d{4}-\d{2}-\d{2})\b/) {
+                @time{qw(year month day)} = split /-/, $1;
+                $got_date = true;
+            }
+            if (/\b(\d{2}:\d{2}:\d{2})$/) {
+                @time{qw(hour minute second)} = split /:/, $1;
+                $got_time = true;
+            }
         }
         if ($got_date || $got_time) {
             if (!$got_date) { # time only
@@ -185,7 +188,7 @@ dateparse - frontend to DateTime::Format::Natural
 =head1 SYNOPSIS
 
  Usage: dateparse [switches]
-   -d, --datetime=<string>     datetime string
+   -d, --datetime=<string>     datetime string *
    -e, --extract               extract expressions
    -f, --format=<format>       format of numeric dates
    -h, --help                  this help screen
@@ -195,6 +198,9 @@ dateparse - frontend to DateTime::Format::Natural
    -t, --time_zone=<string>    time zone string
    -T, --trace                 print trace after processing
    -V, --version               print version
+
+* The date must conform to YYYY-MM-DD and the time to hh:mm:ss.
+Valid datetime strings consist of either date, date/time or time.
 
 =head1 AUTHOR
 
