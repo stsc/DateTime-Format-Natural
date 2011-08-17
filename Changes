@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.97  2011-08-17  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 0.96_04  2011-08-16  <schubiger@cpan.org>
 
  - Check that the datetime string for dateparse has at most
