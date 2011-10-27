@@ -19,7 +19,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.97';
+our $VERSION = '0.97_01';
 
 validation_options(
     on_fail => sub
@@ -172,6 +172,24 @@ sub parse_datetime
             return $self->_get_datetime_object;
         }
         $self->$method($unit => $value);
+
+        $self->_set_valid_exp;
+    }
+    elsif ($date_string =~ /^\d{14}$/) {
+        my %args;
+        @args{qw(year month day hour minute second)} = $date_string =~ /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/;
+
+        my $valid_date = $self->_check_date(map $args{$_}, qw(year month day));
+        my $valid_time = $self->_check_time(map $args{$_}, qw(hour minute second));
+
+        if (not $valid_date && $valid_time) {
+            my $type = !$valid_date ? 'date' : 'time';
+            $self->_set_failure;
+            $self->_set_error("(invalid $type)");
+            return $self->_get_datetime_object;
+        }
+
+        $self->_set(%args);
 
         $self->_set_valid_exp;
     }

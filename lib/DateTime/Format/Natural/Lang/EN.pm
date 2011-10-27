@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.55';
+our $VERSION = '1.56';
 
 our (%init,
      %timespan,
@@ -4345,6 +4345,7 @@ times are also parsable with precision in seconds):
  3:20:00
  -5min
  +2d
+ 20111018000000
 
 =head2 Aliases
 
