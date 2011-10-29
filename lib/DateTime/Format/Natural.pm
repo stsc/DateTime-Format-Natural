@@ -19,7 +19,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.97_01';
+our $VERSION = '0.97_02';
 
 validation_options(
     on_fail => sub
@@ -225,6 +225,13 @@ sub _params_init
         validate_pos(@_, { type => SCALAR });
         (${$params->{string}}) = @_;
     }
+
+    ${$params->{string}} = do {
+        local $_ = ${$params->{string}};
+        s/^\s+//;
+        s/\s+$//;
+        $_;
+    };
 }
 
 sub _parse_init

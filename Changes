@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.97_02  2011-10-27  <schubiger@cpan.org>
+
+ - Strip leading and trailing spaces from input strings.
+
 0.97_01  2011-10-25  <schubiger@cpan.org>
 
  - Support parsing timestamp. [Xiao Yafeng]

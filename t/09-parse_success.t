@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use DateTime::Format::Natural;
-use Test::More tests => 17;
+use Test::More tests => 19;
 
 my @ordinal_number = (
     '2d aug',
@@ -39,11 +39,17 @@ my @rewrite = (
     'saturday 3 months ago at 5',
 );
 
+my @spaces = (
+    ' now',
+    'now ',
+);
+
 foreach my $list (\@ordinal_number,
                   \@durations,
                   \@filtered,
                   \@formatted,
-                  \@rewrite)
+                  \@rewrite,
+                  \@spaces)
 {
     check($list);
 }
