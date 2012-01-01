@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.98_01  2012-01-01  <schubiger@cpan.org>
+
+ - Mention and link to dateparse in the See also section.
+
 0.98  2011-10-29  <schubiger@cpan.org>
 
  - Merged development version to stable.

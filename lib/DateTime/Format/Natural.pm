@@ -19,7 +19,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.98';
+our $VERSION = '0.98_01';
 
 validation_options(
     on_fail => sub
@@ -798,7 +798,7 @@ valuable suggestions and patches:
 
 =head1 SEE ALSO
 
-L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org>
+L<dateparse>, L<DateTime>, L<Date::Calc>, L<http://datetime.perl.org>
 
 =head1 AUTHOR
 
