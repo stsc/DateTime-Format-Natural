@@ -21,7 +21,7 @@ $VERSION = '0.10';
 %EXPORT_TAGS = ('set' => [ @set ]);
 
 %time = map { split /:/ }
-        split /\n/,
+        split /[\n\r]/,
         do { local $/ = '__END__';
              local $_ = <DATA>;
              chomp;
