@@ -106,3 +106,5 @@ sub compare_strings
         fail(_message($string));
     }
 }
+
+done_testing;

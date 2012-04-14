@@ -92,12 +92,15 @@ sub _init_check
             optional => true,
         },
         time_zone => {
-            type => SCALAR,
+            type => SCALAR | OBJECT,
             optional => true,
             callbacks => {
                 'valid timezone' => sub
                 {
-                    eval { DateTime::TimeZone->new(name => shift) };
+                    my $val = shift;
+                    return true
+                        if blessed($val) && $val->isa('DateTime::TimeZone');
+                    eval { DateTime::TimeZone->new(name => $val) };
                     !$@;
                 }
             },
