@@ -14,6 +14,7 @@ my $build = Module::Build->new
                  'boolean' => 0,
                  'Carp' => 0,
                  'DateTime' => 0,
+                 'DateTime::TimeZone' => 0,
                  'Exporter' => 0,
                  'Getopt::Long' => 0,
                  'List::MoreUtils' => 0,

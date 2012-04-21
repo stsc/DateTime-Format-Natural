@@ -1,5 +1,18 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.98_02  2012-04-22  <schubiger@cpan.org>
+
+ - Add validation rules to allow passing DateTime::TimeZone
+   objects. [Roman Filippov]
+
+ - Test providing a DateTime::TimeZone object.
+
+ - Load DateTime::TimeZone explicitly.
+
+ - Test validation of constructor arguments.
+
+ - List Roman Filippov in credits.
+
 0.98_01  2012-01-01  <schubiger@cpan.org>
 
  - Mention and link to dateparse in the See also section.

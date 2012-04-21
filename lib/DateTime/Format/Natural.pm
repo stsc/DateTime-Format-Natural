@@ -14,12 +14,13 @@ use boolean qw(true false);
 
 use Carp qw(croak);
 use DateTime ();
+use DateTime::TimeZone ();
 use List::MoreUtils qw(all any none);
 use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.98_01';
+our $VERSION = '0.98_02';
 
 validation_options(
     on_fail => sub
@@ -92,13 +93,19 @@ sub _init_check
             optional => true,
         },
         time_zone => {
-            type => SCALAR,
+            type => SCALAR | OBJECT,
             optional => true,
             callbacks => {
                 'valid timezone' => sub
                 {
-                    eval { DateTime::TimeZone->new(name => shift) };
-                    !$@;
+                    my $val = shift;
+                    if (blessed($val)) {
+                        return $val->isa('DateTime::TimeZone');
+                    }
+                    else {
+                        eval { DateTime::TimeZone->new(name => $val) };
+                        return !$@;
+                    }
                 }
             },
         },
@@ -795,6 +802,7 @@ valuable suggestions and patches:
  Colm Dougan
  Chifung Fan
  Xiao Yafeng
+ Roman Filippov
 
 =head1 SEE ALSO
 

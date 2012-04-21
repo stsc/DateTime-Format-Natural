@@ -23,8 +23,9 @@ WriteMakefile
                            'Exporter' => 0,
                            'Carp' => 0,
                            'Test::More' => 0,
-                           'Params::Validate' => 0,
+                           'DateTime::TimeZone' => 0,
                            'Term::ReadLine' => 0,
+                           'Params::Validate' => 0,
                            'Module::Util' => 0,
                            'Cwd' => 0
                          }

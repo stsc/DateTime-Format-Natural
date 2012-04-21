@@ -74,17 +74,19 @@ my @simple = (
     { 'thursday last week'           => '16.11.2006 00:00:00'     },
 );
 
-_run_tests(130, [ [ \@simple ] ], \&compare);
+_run_tests(260, [ [ \@simple ] ], \&compare);
 
 sub compare
 {
     my $aref = shift;
 
-    foreach my $href (@$aref) {
-        my $key = (keys %$href)[0];
-        foreach my $entry ($time_entries->($key, $href->{$key})) {
-            foreach my $string ($case_strings->($entry->[0])) {
-                compare_strings($string, $entry->[1]);
+    foreach my $tz ('Asia/Tokyo', DateTime::TimeZone->new(name => 'Asia/Tokyo')) {
+        foreach my $href (@$aref) {
+            my $key = (keys %$href)[0];
+            foreach my $entry ($time_entries->($key, $href->{$key})) {
+                foreach my $string ($case_strings->($entry->[0])) {
+                    compare_strings($string, $entry->[1], $tz);
+                }
             }
         }
     }
@@ -92,10 +94,10 @@ sub compare
 
 sub compare_strings
 {
-    my ($string, $result) = @_;
+    my ($string, $result, $tz) = @_;
 
     my $parser = DateTime::Format::Natural->new(time_zone => 'UTC');
-    $parser->_set_datetime(\%time, 'Asia/Tokyo');
+    $parser->_set_datetime(\%time, $tz);
 
     my $dt = $parser->parse_datetime($string);
 

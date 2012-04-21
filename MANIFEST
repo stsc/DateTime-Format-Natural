@@ -37,5 +37,6 @@ t/12-extract_expression.t
 t/13-regression.t
 t/14-state.t
 t/15-trace.t
+t/16-validate.t
 t/pod-coverage.t
 t/pod.t
