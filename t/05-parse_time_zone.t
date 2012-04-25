@@ -5,6 +5,7 @@ use warnings;
 
 use DateTime::Format::Natural;
 use DateTime::Format::Natural::Test ':set';
+use DateTime::TimeZone;
 use Test::More;
 
 my @simple = (

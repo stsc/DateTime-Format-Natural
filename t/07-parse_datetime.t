@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use DateTime;
 use DateTime::Format::Natural;
 use DateTime::Format::Natural::Test ':set';
 use Test::More;

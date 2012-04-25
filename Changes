@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.98_03  2012-04-22  <schubiger@cpan.org>
+
+ - Check if daytime exists in _daytime_variant().
+
+ - Load modules in test files where missing.
+
 0.98_02  2012-04-22  <schubiger@cpan.org>
 
  - Add validation rules to allow passing DateTime::TimeZone

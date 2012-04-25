@@ -5,7 +5,7 @@ use warnings;
 
 use Test::MockTime qw(set_fixed_time);
 use DateTime::Format::Natural;
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 {
     local $@;
@@ -29,4 +29,10 @@ use Test::More tests => 3;
     my $parser = DateTime::Format::Natural->new;
     $parser->parse_datetime('february');
     ok($parser->success, 'month set with current overlapping day');
+}
+
+{
+    my $parser = DateTime::Format::Natural->new(daytime => { morning => 0 });
+    my $dt = $parser->parse_datetime('morning');
+    is($dt->hour, 0, 'daytime with 0 value');
 }
