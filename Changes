@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.99  2012-04-26  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 0.98_03  2012-04-22  <schubiger@cpan.org>
 
  - Check if daytime exists in _daytime_variant().
