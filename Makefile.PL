@@ -27,6 +27,7 @@ WriteMakefile
                            'Term::ReadLine' => 0,
                            'Params::Validate' => 0,
                            'Module::Util' => 0,
+                           'Clone' => 0,
                            'Cwd' => 0
                          }
         )

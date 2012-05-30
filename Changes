@@ -1,5 +1,25 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+0.99_01  2012-05-20  <schubiger@cpan.org>
+
+ - Introduce ::Expand which handles expanding grammar.
+
+ - Enhance main grammar loop to enable grammar expansion.
+
+ - Include count of tokens for expanded grammar in lookup map.
+
+ - Add test file for expansions.
+
+ - Make the truncate_to grammar option an array reference.
+
+ - Truncate values after each worker method called.
+
+ - Move truncating code to a separate method.
+
+ - Require Clone as prerequisite.
+
+ - Mention expansion of grammar in docs.
+
 0.99  2012-04-26  <schubiger@cpan.org>
 
  - Merged development version to stable.

@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 337;
+use Test::More tests => 341;
 
 my %errors = (
     with_suffix      => qr/suffix 's' without plural/,
@@ -229,6 +229,10 @@ my @meridiem_exceeds = ($errors{meridiem_exceeds},
     'jan 24, 2011 23pm',
     '22nd may 2011 13am',
     '22nd may 2011 13pm',
+# Following tests check errors emitted for dynamically expanded grammar
+# hence testing those few expressions (time_am/time_pm) should suffice.
+    '14am last day',
+    '14pm last day',
 ]);
 
 my @meridiem_zero = ($errors{meridiem_zero},
@@ -317,6 +321,10 @@ my @meridiem_zero = ($errors{meridiem_zero},
     'jan 24, 2011 0pm',
     '22nd may 2011 0am',
     '22nd may 2011 0pm',
+# Following tests check errors emitted for dynamically expanded grammar
+# hence testing those few expressions (time_am/time_pm) should suffice.
+    '0am last day',
+    '0pm last day',
 ]);
 
 my @ordinal_number = ($errors{ordinal_number},

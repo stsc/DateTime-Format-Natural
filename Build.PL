@@ -13,6 +13,7 @@ my $build = Module::Build->new
    requires => {
                  'boolean' => 0,
                  'Carp' => 0,
+                 'Clone' => 0,
                  'DateTime' => 0,
                  'DateTime::TimeZone' => 0,
                  'Exporter' => 0,

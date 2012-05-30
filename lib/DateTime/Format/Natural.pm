@@ -5,6 +5,7 @@ use warnings;
 use base qw(
     DateTime::Format::Natural::Calc
     DateTime::Format::Natural::Duration
+    DateTime::Format::Natural::Expand
     DateTime::Format::Natural::Extract
     DateTime::Format::Natural::Formatted
     DateTime::Format::Natural::Helpers
@@ -20,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '0.99';
+our $VERSION = '0.99_01';
 
 validation_options(
     on_fail => sub
@@ -378,15 +379,25 @@ sub _process
 
     if (!exists $self->{lookup}) {
         foreach my $keyword (keys %{$self->{data}->__grammar('')}) {
-            push @{$self->{lookup}{scalar @{$self->{data}->__grammar($keyword)->[0]}}}, $keyword;
+            my $count = scalar @{$self->{data}->__grammar($keyword)->[0]};
+            push @{$self->{lookup}{$count}}, [ $keyword, false ];
+            if ($self->_expand_for($keyword)) {
+                push @{$self->{lookup}{$count + 1}}, [ $keyword, true ];
+            }
         }
     }
 
-    PARSE: foreach my $keyword (@{$self->{lookup}{$self->{count}{tokens}} || []}) {
+    PARSE: foreach my $lookup (@{$self->{lookup}{$self->{count}{tokens}} || []}) {
+        my ($keyword, $expandable) = @$lookup;
+
         my @grammar = @{$self->{data}->__grammar($keyword)};
         my $types = shift @grammar;
 
-        foreach my $expression (@grammar) {
+        @grammar = map [ $types, $_ ], @grammar;
+        @grammar = $self->_expand($keyword, \@grammar) if $expandable;
+
+        foreach my $entry (@grammar) {
+            my ($types, $expression) = @$entry;
             my $valid_expression = true;
             my $definition = $expression->[0];
             my @positions = sort {$a <=> $b} keys %$definition;
@@ -433,6 +444,7 @@ sub _process
             }
             if ($valid_expression) {
                 $self->_set_valid_exp;
+                my @truncate_to = @{$expression->[6]->{truncate_to} || []};
                 my $i = 0;
                 foreach my $positions (@{$expression->[3]}) {
                     my ($c, @values);
@@ -448,6 +460,7 @@ sub _process
                     }
                     my $worker = "SUPER::$expression->[5]->[$i]";
                     $self->$worker(@values, $expression->[4]->[$i++]);
+                    $self->_truncate(shift @truncate_to);
                 }
                 %opts = %{$expression->[6]};
                 $self->{keyword} = $keyword;
@@ -459,24 +472,32 @@ sub _process
     $self->_post_process(%opts);
 }
 
+sub _truncate
+{
+    my $self = shift;
+    my ($truncate_to) = @_;
+
+    return unless defined $truncate_to;
+
+    my @truncate_to = map { $_ =~ /_/ ? split /_/, $_ : $_ } $truncate_to;
+    my $i = 0;
+    my @units = @{$self->{data}->__units('ordered')};
+    my %indexes = map { $_ => $i++ } @units;
+    foreach my $unit (@truncate_to) {
+        my $index = $indexes{$unit} - 1;
+        if (defined $units[$index] && !exists $self->{modified}{$units[$index]}) {
+            $self->{datetime}->truncate(to => $unit);
+            last;
+        }
+    }
+}
+
 sub _post_process
 {
     my $self = shift;
     my %opts = @_;
 
-    if (exists $opts{truncate_to}) {
-        my @truncate_to = ref $opts{truncate_to} eq 'ARRAY' ? @{$opts{truncate_to}} : ($opts{truncate_to});
-        my $i = 0;
-        my @units = @{$self->{data}->__units('ordered')};
-        my %indexes = map { $_ => $i++ } @units;
-        foreach my $unit (@truncate_to) {
-            my $index = $indexes{$unit} - 1;
-            if (defined $units[$index] && !exists $self->{modified}{$units[$index]}) {
-                $self->{datetime}->truncate(to => $unit);
-                last;
-            }
-        }
-    }
+    delete $opts{truncate_to};
 
     if ($self->{Prefer_future} &&
         (exists $opts{prefer_future} && $opts{prefer_future})
