@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.00  2012-05-30  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
+ - Replace use of constant pragma with boolean.
+
 0.99_01  2012-05-20  <schubiger@cpan.org>
 
  - Introduce ::Expand which handles expanding grammar.

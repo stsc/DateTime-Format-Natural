@@ -53,7 +53,7 @@
    "provides" : {
       "DateTime::Format::Natural" : {
          "file" : "lib/DateTime/Format/Natural.pm",
-         "version" : "0.99_01"
+         "version" : "1.00"
       },
       "DateTime::Format::Natural::Calc" : {
          "file" : "lib/DateTime/Format/Natural/Calc.pm",
@@ -73,7 +73,7 @@
       },
       "DateTime::Format::Natural::Expand" : {
          "file" : "lib/DateTime/Format/Natural/Expand.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       },
       "DateTime::Format::Natural::Extract" : {
          "file" : "lib/DateTime/Format/Natural/Extract.pm",
@@ -112,11 +112,11 @@
          "version" : "0.03"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "license" : [
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.99_01"
+   "version" : "1.00"
 }

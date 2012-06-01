@@ -2,13 +2,12 @@ package DateTime::Format::Natural::Expand;
 
 use strict;
 use warnings;
-use constant true  => 1;
-use constant false => 0;
+use boolean qw(true false);
 
 use Clone qw(clone);
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 my %data = (
     time => {
