@@ -5,7 +5,7 @@ use warnings;
 use base qw(DateTime::Format::Natural::Formatted);
 use boolean qw(true false);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub _extract_expressions
 {
@@ -32,10 +32,12 @@ sub _extract_expressions
 
     my @expressions;
 
-    my %lengths;
+    my (%expand, %lengths);
     foreach my $keyword (keys %entries) {
+        $expand{$keyword}  = $self->_expand_for($keyword);
         $lengths{$keyword} = @{$entries{$keyword}->[0]};
     }
+
     my ($seen_expression, %skip);
     do {
         $seen_expression = false;
@@ -50,39 +52,51 @@ sub _extract_expressions
         foreach my $keyword (sort { $lengths{$b} <=> $lengths{$a} } grep { $lengths{$_} <= @tokens } keys %entries) {
             my @grammar = @{$entries{$keyword}};
             my $types = shift @grammar;
-            my $pos = 0;
-            my @indexes;
-            my $date_index;
-            foreach my $expression (@grammar) {
-                my $definition = $expression->[0];
-                my $matched = false;
-                for (my $i = 0; $i < @tokens; $i++) {
-                    next if $skip{$i};
-                    last unless defined $types->[$pos];
-                    if ($self->_check_for_date($tokens[$i], $i, \$date_index)) {
-                        next;
+            @grammar = map [ $types, $_ ], @grammar;
+            my @grammars = [ [ @grammar ], false ];
+            if ($expand{$keyword} && @$types + 1 <= @tokens) {
+                @grammar = $self->_expand($keyword, \@grammar);
+                unshift @grammars, [ [ @grammar ], true ];
+            }
+            foreach my $grammar (@grammars) {
+                my $pos = 0;
+                my @indexes;
+                my $date_index;
+                my $expanded = $grammar->[1];
+                my $length = $lengths{$keyword};
+                   $length++ if $expanded;
+                foreach my $entry (@{$grammar->[0]}) {
+                    my ($types, $expression) = @$entry;
+                    my $definition = $expression->[0];
+                    my $matched = false;
+                    for (my $i = 0; $i < @tokens; $i++) {
+                        next if $skip{$i};
+                        last unless defined $types->[$pos];
+                        if ($self->_check_for_date($tokens[$i], $i, \$date_index)) {
+                            next;
+                        }
+                        if ($types->[$pos] eq 'SCALAR' && defined $definition->{$pos} && $tokens[$i] =~ /^$definition->{$pos}$/i
+                         or $types->[$pos] eq 'REGEXP'                                && $tokens[$i] =~   $definition->{$pos}
+                        && (@indexes ? ($i - $indexes[-1] == 1) : true)
+                        ) {
+                            $matched = true;
+                            push @indexes, $i;
+                            $pos++;
+                        }
+                        elsif ($matched) {
+                            last;
+                        }
                     }
-                    if ($types->[$pos] eq 'SCALAR' && defined $definition->{$pos} && $tokens[$i] =~ /^$definition->{$pos}$/i
-                     or $types->[$pos] eq 'REGEXP'                                && $tokens[$i] =~   $definition->{$pos}
-                    && (@indexes ? ($i - $indexes[-1] == 1) : true)
+                    if (@indexes == $length
+                    && (defined $date_index ? ($indexes[0] - $date_index == 1) : true)
                     ) {
-                        $matched = true;
-                        push @indexes, $i;
-                        $pos++;
+                        my $expression = join ' ', (defined $date_index ? $tokens[$date_index] : (), @tokens[@indexes]);
+                        my $start_index = defined $date_index ? $indexes[0] - 1 : $indexes[0];
+                        push @expressions, [ [ $start_index, $indexes[-1] ], $expression ];
+                        $skip{$_} = true foreach (defined $date_index ? $date_index : (), @indexes);
+                        $seen_expression = true;
+                        last OUTER;
                     }
-                    elsif ($matched) {
-                        last;
-                    }
-                }
-                if (@indexes == $lengths{$keyword}
-                && (defined $date_index ? ($indexes[0] - $date_index == 1) : true)
-                ) {
-                    my $expression = join ' ', (defined $date_index ? $tokens[$date_index] : (), @tokens[@indexes]);
-                    my $start_index = defined $date_index ? $indexes[0] - 1 : $indexes[0];
-                    push @expressions, [ [ $start_index, $indexes[-1] ], $expression ];
-                    $skip{$_} = true foreach (defined $date_index ? $date_index : (), @indexes);
-                    $seen_expression = true;
-                    last OUTER;
                 }
             }
         }
