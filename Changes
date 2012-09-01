@@ -1,5 +1,13 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.00_02  2012-09-01  <schubiger@cpan.org>
+
+ - Duplicate and extend types only for grammar expansion.
+
+ - Initialize subscript variable.
+
+ - Remove trailing semicolon in do block.
+
 1.00_01  2012-07-21  <schubiger@cpan.org>
 
  - Extract expanded expressions and add a test.

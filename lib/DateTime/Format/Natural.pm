@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.00_01';
+our $VERSION = '1.00_02';
 
 validation_options(
     on_fail => sub
@@ -238,7 +238,7 @@ sub _params_init
         local $_ = ${$params->{string}};
         s/^\s+//;
         s/\s+$//;
-        $_;
+        $_
     };
 }
 
@@ -391,13 +391,12 @@ sub _process
         my ($keyword, $expandable) = @$lookup;
 
         my @grammar = @{$self->{data}->__grammar($keyword)};
-        my $types = shift @grammar;
+        my $types_entry = shift @grammar;
 
-        @grammar = map [ $types, $_ ], @grammar;
-        @grammar = $self->_expand($keyword, \@grammar) if $expandable;
+        @grammar = $self->_expand($keyword, $types_entry, \@grammar) if $expandable;
 
         foreach my $entry (@grammar) {
-            my ($types, $expression) = @$entry;
+            my ($types, $expression) = $expandable ? @$entry : ($types_entry, $entry);
             my $valid_expression = true;
             my $definition = $expression->[0];
             my @positions = sort {$a <=> $b} keys %$definition;
@@ -431,7 +430,7 @@ sub _process
                 }
             }
             if ($valid_expression && @{$expression->[2]}) {
-                my $i;
+                my $i = 0;
                 foreach my $check (@{$expression->[2]}) {
                     my @pos = @{$expression->[1][$i++]};
                     my $error;

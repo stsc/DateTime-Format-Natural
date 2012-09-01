@@ -5,7 +5,7 @@ use warnings;
 use base qw(DateTime::Format::Natural::Formatted);
 use boolean qw(true false);
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub _extract_expressions
 {
@@ -51,11 +51,10 @@ sub _extract_expressions
         OUTER:
         foreach my $keyword (sort { $lengths{$b} <=> $lengths{$a} } grep { $lengths{$_} <= @tokens } keys %entries) {
             my @grammar = @{$entries{$keyword}};
-            my $types = shift @grammar;
-            @grammar = map [ $types, $_ ], @grammar;
+            my $types_entry = shift @grammar;
             my @grammars = [ [ @grammar ], false ];
-            if ($expand{$keyword} && @$types + 1 <= @tokens) {
-                @grammar = $self->_expand($keyword, \@grammar);
+            if ($expand{$keyword} && @$types_entry + 1 <= @tokens) {
+                @grammar = $self->_expand($keyword, $types_entry, \@grammar);
                 unshift @grammars, [ [ @grammar ], true ];
             }
             foreach my $grammar (@grammars) {
@@ -66,7 +65,7 @@ sub _extract_expressions
                 my $length = $lengths{$keyword};
                    $length++ if $expanded;
                 foreach my $entry (@{$grammar->[0]}) {
-                    my ($types, $expression) = @$entry;
+                    my ($types, $expression) = $expanded ? @$entry : ($types_entry, $entry);
                     my $definition = $expression->[0];
                     my $matched = false;
                     for (my $i = 0; $i < @tokens; $i++) {

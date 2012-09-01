@@ -7,7 +7,7 @@ use boolean qw(true false);
 use Clone qw(clone);
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 my %data = (
     time => {
@@ -101,7 +101,7 @@ sub _expand_for
 sub _expand
 {
     my $self = shift;
-    my ($keyword, $grammar) = @_;
+    my ($keyword, $types_entry, $grammar) = @_;
 
     my %expand = (
         prefix => \%expand_prefix,
@@ -118,11 +118,11 @@ sub _expand
 
         foreach my $element (@elements) {
            foreach my $entry (@$grammar) {
-                my $types = clone($entry->[0]);
+                my $types = clone($types_entry);
 
                 $save->($type, $types, 'REGEXP');
 
-                my $new = clone($entry->[1]);
+                my $new = clone($entry);
 
                 if ($type eq 'prefix') {
                     my %definition;
@@ -182,7 +182,7 @@ sub _expand
                     push @{$new->[6]->{$key}}, @{$data{$element}->{6}->{$key}};
                 }
 
-                push @expansions, [ $types , $new ];
+                push @expansions, [ $types, $new ];
             }
         }
     }
