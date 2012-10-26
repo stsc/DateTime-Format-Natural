@@ -5,7 +5,7 @@ use warnings;
 
 use DateTime::Format::Natural;
 use DateTime::Format::Natural::Test qw($case_strings);
-use Test::More tests => 34 * 3; # case tests
+use Test::More tests => 40 * 3; # case tests
 
 my @strings = (
     { 'see you next thurs for coffee',                      => [ 'next thu'                                ] },
@@ -21,6 +21,7 @@ my @strings = (
     { '1969-07-20 and now'                                  => [ qw(1969-07-20 now)                        ] },
     { '6:00 compared to 6'                                  => [ '6:00'                                    ] }, # ambiguous token missing
     { 'yesterday to today and today to tomorrow'            => [ 'yesterday to today', 'today to tomorrow' ] },
+    { 'tuesday wednesday'                                   => [ qw(tuesday wednesday)                     ] },
 );
 
 my @expanded = (
@@ -53,7 +54,16 @@ my @punctuation = (
     { 'thursday, '     => [ 'thursday'         ] },
 );
 
-foreach my $set (\@strings, \@expanded, \@rewrite, \@punctuation) {
+# sanity checks
+my @duration = (
+    { 'monday to to friday'       => [ qw(monday friday)          ] },
+    { 'saturday to'               => [ 'saturday'                 ] },
+    { 'to saturday'               => [ 'saturday'                 ] },
+    { 'this year to next year to' => [ 'this year to next year'   ] },
+    { 'feb to may to oct to dec'  => [ 'feb to may', 'oct to dec' ] },
+);
+
+foreach my $set (\@strings, \@expanded, \@rewrite, \@punctuation, \@duration) {
     compare($set);
 }
 

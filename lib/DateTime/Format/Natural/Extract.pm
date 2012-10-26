@@ -5,7 +5,7 @@ use warnings;
 use base qw(DateTime::Format::Natural::Formatted);
 use boolean qw(true false);
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 sub _extract_expressions
 {
@@ -58,9 +58,6 @@ sub _extract_expressions
                 unshift @grammars, [ [ @grammar ], true ];
             }
             foreach my $grammar (@grammars) {
-                my $pos = 0;
-                my @indexes;
-                my $date_index;
                 my $expanded = $grammar->[1];
                 my $length = $lengths{$keyword};
                    $length++ if $expanded;
@@ -68,6 +65,9 @@ sub _extract_expressions
                     my ($types, $expression) = $expanded ? @$entry : ($types_entry, $entry);
                     my $definition = $expression->[0];
                     my $matched = false;
+                    my $pos = 0;
+                    my @indexes;
+                    my $date_index;
                     for (my $i = 0; $i < @tokens; $i++) {
                         next if $skip{$i};
                         last unless defined $types->[$pos];
@@ -115,28 +115,40 @@ sub _finalize_expressions
     my ($expressions, $tokens) = @_;
 
     my $timespan_sep = $self->{data}->__timespan('literal');
-    my @final_expressions;
+    my (@duration_indexes, @final_expressions);
 
-    my @duration_indexes;
+    my $seen_duration = false;
+
     foreach my $expression (sort { $a->[0][0] <=> $b->[0][0] } @$expressions) {
         my $prev = $expression->[0][0] - 1;
         my $next = $expression->[0][1] + 1;
 
-        if (defined $tokens->[$next] && $tokens->[$next] =~ /^$timespan_sep$/i) {
-            if (@final_expressions   && $tokens->[$prev] !~ /^$timespan_sep$/i) {
+        if (!$seen_duration && defined $tokens->[$next] && $tokens->[$next] =~ /^$timespan_sep$/i) {
+            if (@final_expressions && $tokens->[$prev] !~ /^$timespan_sep$/i) {
                 @duration_indexes = ();
             }
-            push @duration_indexes, ($expression->[0][0] .. $expression->[0][1], $next);
-        }
-        elsif (defined $tokens->[$prev] && $tokens->[$prev] =~ /^$timespan_sep$/i) {
             push @duration_indexes, ($expression->[0][0] .. $expression->[0][1]);
-
-            push @final_expressions, join ' ', @$tokens[@duration_indexes];
+            $seen_duration = true;
+        }
+        elsif ($seen_duration) {
+            if ($prev - $duration_indexes[-1] == 1) {
+                push @duration_indexes, ($prev, $expression->[0][0] .. $expression->[0][1]);
+                push @final_expressions, join ' ', @$tokens[@duration_indexes];
+            }
+            else {
+                push @final_expressions, join ' ', @$tokens[@duration_indexes];
+                push @final_expressions, $expression->[1];
+            }
             @duration_indexes = ();
+            $seen_duration = false;
         }
         else {
             push @final_expressions, $expression->[1];
         }
+    }
+
+    if (@duration_indexes) {
+        push @final_expressions, join ' ', @$tokens[@duration_indexes];
     }
 
     my $exclude = sub { $_[0] =~ /^\d{1,2}$/ };

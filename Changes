@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.01_01  2012-10-25  <schubiger@cpan.org>
+
+ - Narrow scope of variables in _extract_expressions().
+
+ - Improve finalizing duration expressions.
+
 1.01  2012-09-07  <schubiger@cpan.org>
 
  - Merged development version to stable.
