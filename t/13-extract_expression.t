@@ -2,10 +2,11 @@
 
 use strict;
 use warnings;
+use boolean qw(true);
 
 use DateTime::Format::Natural;
 use DateTime::Format::Natural::Test qw($case_strings);
-use Test::More tests => 40 * 3; # case tests
+use Test::More tests => 112 * 3; # case tests
 
 my @strings = (
     { 'see you next thurs for coffee',                      => [ 'next thu'                                ] },
@@ -22,6 +23,9 @@ my @strings = (
     { '6:00 compared to 6'                                  => [ '6:00'                                    ] }, # ambiguous token missing
     { 'yesterday to today and today to tomorrow'            => [ 'yesterday to today', 'today to tomorrow' ] },
     { 'tuesday wednesday'                                   => [ qw(tuesday wednesday)                     ] },
+    { 'we will stay for 3 days at the venue'                => [ 'for 3 days'                              ] },
+    { 'from first to last day of october forms a month'     => [ 'first to last day of october'            ] },
+    { '26 oct at 10am to 11:00 is spare time'               => [ '26 oct 10am to 11:00'                    ] },
 );
 
 my @expanded = (
@@ -63,7 +67,26 @@ my @duration = (
     { 'feb to may to oct to dec'  => [ 'feb to may', 'oct to dec' ] },
 );
 
-foreach my $set (\@strings, \@expanded, \@rewrite, \@punctuation, \@duration) {
+my @durations = (
+# relative
+    { 'first to last day of september'  => [ 'first to last day of september' ] },
+    { 'first to last day of 2008'       => [ 'first to last day of 2008'      ] },
+    { '2009-03-10 at 9:00 to 11:00'     => [ '2009-03-10 9:00 to 11:00'       ] },
+    { '26 oct 10am to 11:00'            => [ '26 oct 10am to 11:00'           ] },
+    { 'may 2nd to 5th'                  => [ 'may 2nd to 5th'                 ] },
+    { 'jan 1 to 2nd'                    => [ 'jan 1 to 2nd'                   ] },
+    { '16:00 6 nov to 17:00'            => [ '16:00 6 nov to 17:00'           ] },
+    { '24 dec to 26'                    => [ '24 dec to 26'                   ] },
+    { '100th day to 200th'              => [ '100th day to 200th'             ] },
+# rewrite
+    { 'today at 5pm to tomorrow at 6am' => [ 'today 5pm to tomorrow 6am'      ] },
+    { 'monday 7 am to friday 5 pm'      => [ 'monday 7am to friday 5pm'       ] },
+    { 'tues to thurs'                   => [ 'tue to thu'                     ] },
+    { 'sat @ 2 to sun @ 6'              => [ 'sat 2:00 to sun 6:00'           ] },
+
+);
+
+foreach my $set (\@strings, \@expanded, \@rewrite, \@punctuation, \@duration, \@durations) {
     compare($set);
 }
 
@@ -87,7 +110,16 @@ sub compare_strings
     my @expressions = $parser->extract_datetime($string);
 
     if (@expressions) {
-        is_deeply([ map lc, @expressions ], $result, $string);
+        my $equal = is_deeply([ map lc, @expressions ], $result, "$string (extracting)");
+        SKIP: {
+            skip 'extracted expressions differ', 1 unless $equal;
+            my $parses = true;
+            foreach my $expression (@expressions) {
+                $parser->parse_datetime_duration($expression);
+                $parses &= $parser->success;
+            }
+            ok($parses, "$string (parsing)");
+        }
     }
     else {
         fail($string);

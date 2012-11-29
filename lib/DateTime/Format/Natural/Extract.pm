@@ -2,10 +2,29 @@ package DateTime::Format::Natural::Extract;
 
 use strict;
 use warnings;
-use base qw(DateTime::Format::Natural::Formatted);
+use base qw(
+    DateTime::Format::Natural::Duration::Checks
+    DateTime::Format::Natural::Formatted
+);
 use boolean qw(true false);
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
+
+my $get_range = sub
+{
+    my ($aref, $index) = @_;
+    return [ grep defined, @$aref[$index, $index + 1] ];
+};
+
+my $extract_duration = sub
+{
+    my ($skip, $indexes, $index) = @_;
+
+    return false unless defined $indexes->[$index] && defined $indexes->[$index + 1];
+    my ($left_index, $right_index) = ($indexes->[$index][1], $indexes->[$index + 1][0]);
+
+    return ($skip->{$left_index} || $skip->{$right_index}) ? false : true;
+};
 
 sub _extract_expressions
 {
@@ -30,7 +49,46 @@ sub _extract_expressions
     my @tokens = split /\s+/, $extract_string;
     my %entries = %{$self->{data}->__grammar('')};
 
-    my @expressions;
+    my (@expressions, %skip);
+
+    my $timespan_sep = $self->{data}->__timespan('literal');
+
+    if ($extract_string =~ /\s+ $timespan_sep \s+/ix) {
+        my @strings = split /\s+ $timespan_sep \s+/ix, $extract_string;
+        my $index = 0;
+        my @indexes;
+        for (my $i = 0; $i < @strings; $i++) {
+            my @tokens = split /\s+/, $strings[$i];
+            push @indexes, [ $index, $index + $#tokens ];
+            $index += $#tokens + 2;
+        }
+
+        my $duration = $self->{data}->{duration};
+
+        DURATION: {
+            my $save_expression = false;
+            my @chunks;
+            for (my $i = 0; $i < @strings; $i++) {
+                if ($extract_duration->(\%skip, \@indexes, $i)
+                 && $self->first_to_last_extract($duration, $get_range->(\@strings, $i), $get_range->(\@indexes, $i), \@tokens, \@chunks)
+                ) {
+                    $save_expression = true;
+                }
+                elsif ($extract_duration->(\%skip, \@indexes, $i)
+                 && $self->from_count_to_count_extract($duration, $get_range->(\@strings, $i), $get_range->(\@indexes, $i), \@tokens, \@chunks)
+                ) {
+                    $save_expression = true;
+                }
+                if ($save_expression) {
+                    foreach my $chunk (@chunks) {
+                        push @expressions, $chunk;
+                        $skip{$_} = true foreach ($chunk->[0][0] .. $chunk->[0][1]);
+                    }
+                    redo DURATION;
+                }
+            }
+        }
+    }
 
     my (%expand, %lengths);
     foreach my $keyword (keys %entries) {
@@ -38,7 +96,7 @@ sub _extract_expressions
         $lengths{$keyword} = @{$entries{$keyword}->[0]};
     }
 
-    my ($seen_expression, %skip);
+    my $seen_expression;
     do {
         $seen_expression = false;
         my $date_index;
@@ -48,7 +106,7 @@ sub _extract_expressions
                 last;
             }
         }
-        OUTER:
+        GRAMMAR:
         foreach my $keyword (sort { $lengths{$b} <=> $lengths{$a} } grep { $lengths{$_} <= @tokens } keys %entries) {
             my @grammar = @{$entries{$keyword}};
             my $types_entry = shift @grammar;
@@ -86,15 +144,16 @@ sub _extract_expressions
                             last;
                         }
                     }
-                    if (@indexes == $length
-                    && (defined $date_index ? ($indexes[0] - $date_index == 1) : true)
+                    if ($matched
+                     && @indexes == $length
+                     && (defined $date_index ? ($indexes[0] - $date_index == 1) : true)
                     ) {
                         my $expression = join ' ', (defined $date_index ? $tokens[$date_index] : (), @tokens[@indexes]);
                         my $start_index = defined $date_index ? $indexes[0] - 1 : $indexes[0];
                         push @expressions, [ [ $start_index, $indexes[-1] ], $expression ];
                         $skip{$_} = true foreach (defined $date_index ? $date_index : (), @indexes);
                         $seen_expression = true;
-                        last OUTER;
+                        last GRAMMAR;
                     }
                 }
             }

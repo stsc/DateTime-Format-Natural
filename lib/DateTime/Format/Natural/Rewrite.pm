@@ -3,7 +3,7 @@ package DateTime::Format::Natural::Rewrite;
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub _rewrite
 {
@@ -21,7 +21,7 @@ sub _rewrite_regular
     my ($date_string) = @_;
 
     $$date_string =~ tr/,//d;
-    $$date_string =~ s/\s+?(am|pm)\b/$1/i;
+    $$date_string =~ s/\s+?(am|pm)\b/$1/gi;
 }
 
 sub _rewrite_conditional
@@ -31,17 +31,19 @@ sub _rewrite_conditional
 
     my $rewrite = $self->{data}->{rewrite};
 
-    if ($$date_string =~ $rewrite->{at}{match}) {
-        my $last_token = (split /\s+/, $$date_string)[-1];
-        my @regexes = (
-            (map $self->{data}->__RE($_), qw(time time_am time_pm)),
-            $rewrite->{at}{daytime},
-        );
-        foreach my $regex (@regexes) {
-            if ($last_token =~ $regex) {
-                $$date_string  =~ s/$rewrite->{at}{subst}//;
-                $$date_string .= ':00' if $$date_string =~ /\s+?\d{1,2}$/;
-                last;
+    REWRITE: {
+        if ($$date_string =~ /$rewrite->{at}{match}/g) {
+            my $last_token = $1;
+            my @regexes = (
+                (map $self->{data}->__RE($_), qw(time time_am time_pm)),
+                $rewrite->{at}{daytime},
+            );
+            foreach my $regex (@regexes) {
+                if ($last_token =~ $regex) {
+                    $$date_string =~ s/\G/:00/ if $last_token =~ /^\d{1,2}$/;
+                    $$date_string =~ s/$rewrite->{at}{subst}//;
+                    redo REWRITE;
+                }
             }
         }
     }
@@ -58,10 +60,10 @@ sub _rewrite_aliases
         foreach my $type (qw(words tokens)) {
             foreach my $alias (keys %{$aliases->{$type}}) {
                 if ($alias =~ /^\w+$/) {
-                    $$date_string =~ s/\b $alias \b/$aliases->{$type}{$alias}/ix;
+                    $$date_string =~ s/\b $alias \b/$aliases->{$type}{$alias}/gix;
                 }
                 else {
-                    $$date_string =~ s/(?:^|(?<=\s)) $alias (?:(?=\s)|$)/$aliases->{$type}{$alias}/ix;
+                    $$date_string =~ s/(?:^|(?<=\s)) $alias (?:(?=\s)|$)/$aliases->{$type}{$alias}/gix;
                 }
             }
         }

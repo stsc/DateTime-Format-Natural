@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(true false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 9;
+use Test::More tests => 13;
 
 {
     # Assert for prefixed dates that an extracted unit which is
@@ -72,4 +72,21 @@ use Test::More tests => 9;
     my $parser = DateTime::Format::Natural->new;
     my @expressions = $parser->extract_datetime('8am 4pm');
     is_deeply(\@expressions, [qw(8am 4pm)], 'extract with single grammar subentry');
+}
+
+{
+    # Assert that regexes match only at word boundary when extracting relative durations.
+    my $parser = DateTime::Format::Natural->new;
+
+    my @expressions = $parser->extract_datetime('123first to last day of nov');
+    ok(@expressions == 1 && $expressions[0] eq 'last day of nov', 'first to last duration word boundary begin');
+
+    @expressions = $parser->extract_datetime('first to last day of nov456');
+    ok(@expressions == 1 && $expressions[0] eq 'last day', 'first to last duration word boundary end');
+
+    @expressions = $parser->extract_datetime('abc2012-11-01 18:00 to 20:00');
+    ok(@expressions == 1 && $expressions[0] eq '18:00 to 20:00', 'from count to count duration word boundary begin');
+
+    @expressions = $parser->extract_datetime('nov 1 to 2ndxyz');
+    ok(@expressions == 1 && $expressions[0] eq 'nov 1', 'from count to count duration word boundary end');
 }

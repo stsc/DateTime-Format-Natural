@@ -53,7 +53,7 @@
    "provides" : {
       "DateTime::Format::Natural" : {
          "file" : "lib/DateTime/Format/Natural.pm",
-         "version" : "1.01_01"
+         "version" : "1.01_02"
       },
       "DateTime::Format::Natural::Calc" : {
          "file" : "lib/DateTime/Format/Natural/Calc.pm",
@@ -69,7 +69,7 @@
       },
       "DateTime::Format::Natural::Duration::Checks" : {
          "file" : "lib/DateTime/Format/Natural/Duration/Checks.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       },
       "DateTime::Format::Natural::Expand" : {
          "file" : "lib/DateTime/Format/Natural/Expand.pm",
@@ -77,7 +77,7 @@
       },
       "DateTime::Format::Natural::Extract" : {
          "file" : "lib/DateTime/Format/Natural/Extract.pm",
-         "version" : "0.08"
+         "version" : "0.09"
       },
       "DateTime::Format::Natural::Formatted" : {
          "file" : "lib/DateTime/Format/Natural/Formatted.pm",
@@ -93,11 +93,11 @@
       },
       "DateTime::Format::Natural::Lang::EN" : {
          "file" : "lib/DateTime/Format/Natural/Lang/EN.pm",
-         "version" : "1.57"
+         "version" : "1.58"
       },
       "DateTime::Format::Natural::Rewrite" : {
          "file" : "lib/DateTime/Format/Natural/Rewrite.pm",
-         "version" : "0.05"
+         "version" : "0.06"
       },
       "DateTime::Format::Natural::Test" : {
          "file" : "lib/DateTime/Format/Natural/Test.pm",
@@ -118,5 +118,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "1.01_01"
+   "version" : "1.01_02"
 }

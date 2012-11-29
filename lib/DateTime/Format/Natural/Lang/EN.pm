@@ -13,13 +13,14 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.57';
+our $VERSION = '1.58';
 
 our (%init,
      %timespan,
      %units,
      %suffixes,
      %regexes,
+     %re,
      %RE,
      %data_weekdays,
      %data_weekdays_abbrev,
@@ -39,17 +40,23 @@ our (%init,
 %timespan = (literal => 'to');
 %units    = (ordered => [ qw(second minute hour day week month year) ]);
 %suffixes = (ordinal => join '|', qw(st nd rd th d));
-%regexes  = (format  => qr!^((?:\d+?(?:-(?:[a-zA-Z]+?|\d+?)-|[./]\d+?[./])\d+?) | (?:\d+?/\d+?)) (?:(?=\s)|$)!x);
+%regexes  = (format_ => qr!((?:\d+?(?:-(?:[a-zA-Z]+?|\d+?)-|[./]\d+?[./])\d+?) | (?:\d+?/\d+?))!x);
 
-%RE = (number    => qr/^(\d+)$/,
-       year      => qr/^(\d{4})$/,
-       time      => qr/^((?:\d{1,2})(?:\:\d{2}){0,2})$/,
-       time_am   => qr/^((?:\d{1,2})(?:\:\d{2}){0,2})am$/i,
-       time_pm   => qr/^((?:\d{1,2})(?:\:\d{2}){0,2})pm$/i,
-       time_min  => qr/^(\d{1,2}(?:\:\d{2}){1,2})$/,
-       day       => qr/^(\d+)($suffixes{ordinal})?$/i,
-       monthday  => qr/^(\d{1,2})($suffixes{ordinal})?$/i);
+$regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
+
+%re = (number   => qr/(\d+)/,
+       year     => qr/(\d{4})/,
+       time     => qr/((?:\d{1,2})(?:\:\d{2}){0,2})/,
+       time_am  => qr/((?:\d{1,2})(?:\:\d{2}){0,2})am/i,
+       time_pm  => qr/((?:\d{1,2})(?:\:\d{2}){0,2})pm/i,
+       time_min => qr/(\d{1,2}(?:\:\d{2}){1,2})/,
+       day      => qr/(\d+)($suffixes{ordinal})?/i,
+       monthday => qr/(\d{1,2})($suffixes{ordinal})?/i);
 {
+    foreach my $name (keys %re) {
+        $RE{$name} = qr/^$re{$name}$/;
+    }
+
     my $sort = sub
     {
         my ($data) = @_;
@@ -75,10 +82,12 @@ our (%init,
     @data_weekdays_all = ($sort->(\%data_weekdays), $sort_abbrev->(\%data_weekdays_abbrev, \%data_weekdays));
 
     my $days_re = join '|', @data_weekdays_all;
-    $RE{weekday} = qr/^($days_re)$/i;
+    $re{weekday} = qr/($days_re)/i;
+    $RE{weekday} = qr/^$re{weekday}$/;
 
     $days_re = join '|', map "${_}s?", @data_weekdays_all;
-    $RE{weekdays} = qr/^($days_re)$/i;
+    $re{weekdays} = qr/($days_re)/i;
+    $RE{weekdays} = qr/^$re{weekdays}$/;
 
     $i = 1;
 
@@ -93,7 +102,8 @@ our (%init,
     @data_months_all = ($sort->(\%data_months), $sort_abbrev->(\%data_months_abbrev, \%data_months));
 
     my $months_re = join '|', @data_months_all;
-    $RE{month} = qr/^($months_re)$/i;
+    $re{month} = qr/($months_re)/i;
+    $RE{month} = qr/^$re{month}$/;
 
     %data_conversion = (
         last_this_next    => { do { $i = -1; map { $_ => $i++ } qw(last this next)           } },
@@ -111,13 +121,13 @@ our (%init,
 
     %data_duration = (
         for => {
-            regex   => qr/^for \s+ .+$/ix,
+            regex   => qr/^for \s+ \d+ \s+ \S+$/ix,
             present => 'now',
         },
         first_to_last => {
             regexes => {
-                first   => qr/^first$/i,
-                last    => qr/^last \s+ .+$/ix,
+                first   => qr/first/i,
+                last    => qr/last \s+ day \s+ of \s+ (?:$re{month}|$re{year})/ix,
                 extract => qr/^\S+? \s+ (.+)$/x,
             },
         },
@@ -140,6 +150,16 @@ our (%init,
                 day_ordinal   => 'day',
                 day           => 'day',
             },
+            extract => {
+                left => {
+                    time => qr/$regexes{format_}|$re{day}\s+$re{month}/,
+                    day  => qr/$re{month}/,
+                },
+                right => {
+                    time => qr/$re{day}\s+$re{month}/,
+                    day  => qr/$re{month}|day/i,
+                },
+            },
         },
     );
 
@@ -161,7 +181,7 @@ our (%init,
 
     %data_rewrite = (
         at => {
-            match   => qr/\S+? \s+? at \s+? \S+$/ix,
+            match   => qr/\S+? \s+? at \s+? (\S+)/ix,
             subst   => qr/\s+? at \b/ix,
             daytime => qr/^(?:noon|midnight)$/i,
         },
