@@ -113,7 +113,8 @@ sub compare_strings
         my $equal = is_deeply([ map lc, @expressions ], $result, "$string (extracting)");
         SKIP: {
             skip 'extracted expressions differ', 1 unless $equal;
-            my $parses = true;
+            # eval in order to avoid fatal errors on some older perls
+            my $parses = eval true;
             foreach my $expression (@expressions) {
                 $parser->parse_datetime_duration($expression);
                 $parses &= $parser->success;

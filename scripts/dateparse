@@ -163,6 +163,8 @@ EOT
         warn "no parsable expressions extracted\n" unless @expressions;
 
         foreach my $expression (@expressions) {
+            print "extracted: $expression\n" if $extract;
+
             my @dt = $parser->parse_datetime_duration(string => $expression);
             my @traces = $parser->trace;
 
