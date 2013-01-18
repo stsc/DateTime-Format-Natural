@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use boolean qw(true false);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub for
 {
@@ -57,7 +57,9 @@ my $extract_chunk = sub
     my @tokens    = split /\s+/, $match;
     my $end_index = $start_index + $#tokens;
 
-    return [ [ $base_index + $start_index, $base_index + $end_index ], $match ];
+    my $expression = join ' ', @tokens;
+
+    return [ [ $base_index + $start_index, $base_index + $end_index ], $expression ];
 };
 
 my $has_timespan_sep = sub
@@ -77,7 +79,7 @@ my $has_timespan_sep = sub
     }
 };
 
-sub first_to_last_extract
+sub _first_to_last_extract
 {
     my ($self, $duration, $date_strings, $indexes, $tokens, $chunks) = @_;
 
@@ -199,7 +201,7 @@ sub from_count_to_count
     }
 }
 
-sub from_count_to_count_extract
+sub _from_count_to_count_extract
 {
     my ($self, $duration, $date_strings, $indexes, $tokens, $chunks) = @_;
 

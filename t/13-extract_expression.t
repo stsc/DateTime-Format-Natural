@@ -6,7 +6,7 @@ use boolean qw(true);
 
 use DateTime::Format::Natural;
 use DateTime::Format::Natural::Test qw($case_strings);
-use Test::More tests => 112 * 3; # case tests
+use Test::More;
 
 my @strings = (
     { 'see you next thurs for coffee',                      => [ 'next thu'                                ] },
@@ -58,6 +58,12 @@ my @punctuation = (
     { 'thursday, '     => [ 'thursday'         ] },
 );
 
+my @spaces = (
+    { 'wednesday  this  week'         => [ 'wednesday this week'      ] },
+    { 'first  to  last  day  of  jan' => [ 'first to last day of jan' ] },
+    { '2013-01-16  8pm  to  10pm'     => [ '2013-01-16 8pm to 10pm'   ] },
+);
+
 # sanity checks
 my @duration = (
     { 'monday to to friday'       => [ qw(monday friday)          ] },
@@ -68,9 +74,10 @@ my @duration = (
 );
 
 my @durations = (
-# relative
+# combined
     { 'first to last day of september'  => [ 'first to last day of september' ] },
     { 'first to last day of 2008'       => [ 'first to last day of 2008'      ] },
+# relative
     { '2009-03-10 at 9:00 to 11:00'     => [ '2009-03-10 9:00 to 11:00'       ] },
     { '26 oct 10am to 11:00'            => [ '26 oct 10am to 11:00'           ] },
     { 'may 2nd to 5th'                  => [ 'may 2nd to 5th'                 ] },
@@ -86,7 +93,7 @@ my @durations = (
 
 );
 
-foreach my $set (\@strings, \@expanded, \@rewrite, \@punctuation, \@duration, \@durations) {
+foreach my $set (\@strings, \@expanded, \@rewrite, \@punctuation, \@spaces, \@duration, \@durations) {
     compare($set);
 }
 
@@ -126,3 +133,5 @@ sub compare_strings
         fail($string);
     }
 }
+
+done_testing();

@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(true false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 13;
+use Test::More tests => 15;
 
 {
     # Assert for prefixed dates that an extracted unit which is
@@ -89,4 +89,15 @@ use Test::More tests => 13;
 
     @expressions = $parser->extract_datetime('nov 1 to 2ndxyz');
     ok(@expressions == 1 && $expressions[0] eq 'nov 1', 'from count to count duration word boundary end');
+}
+
+{
+    # Assert that date/grammar expressions do not overlap with duration ones.
+    my $parser = DateTime::Format::Natural->new;
+
+    my @expressions = $parser->extract_datetime('2012-12-31 to first to last day of 2013');
+    is_deeply(\@expressions, ['2012-12-31', 'first to last day of 2013'], 'date overlapping duration');
+
+    @expressions = $parser->extract_datetime('last day of 2012 to jan 1st to 31st');
+    is_deeply(\@expressions, ['last day of 2012', 'jan 1st to 31st'], 'grammar overlapping duration');
 }

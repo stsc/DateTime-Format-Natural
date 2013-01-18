@@ -8,7 +8,11 @@ use base qw(
 );
 use boolean qw(true false);
 
-our $VERSION = '0.09';
+use constant DATE_TYPE     => 0x01;
+use constant GRAMMAR_TYPE  => 0x02;
+use constant DURATION_TYPE => 0x04;
+
+our $VERSION = '0.10';
 
 my $get_range = sub
 {
@@ -54,37 +58,46 @@ sub _extract_expressions
     my $timespan_sep = $self->{data}->__timespan('literal');
 
     if ($extract_string =~ /\s+ $timespan_sep \s+/ix) {
-        my @strings = split /\s+ $timespan_sep \s+/ix, $extract_string;
-        my $index = 0;
-        my @indexes;
-        for (my $i = 0; $i < @strings; $i++) {
-            my @tokens = split /\s+/, $strings[$i];
-            push @indexes, [ $index, $index + $#tokens ];
-            $index += $#tokens + 2;
-        }
+        my $trim = sub { local $_ = shift; s/^\s+//; s/\s+$//; $_ };
 
-        my $duration = $self->{data}->{duration};
-
-        DURATION: {
-            my $save_expression = false;
-            my @chunks;
+        my @strings = grep /\S/, map $trim->($_), split /\b$timespan_sep\b/i, do {
+            local $_ = $extract_string;
+            1 while s/^$timespan_sep\s+//i;
+            1 while s/\s+$timespan_sep$//i;
+            $_
+        };
+        if (@strings) {
+            my $index = 0;
+            $index++ while $extract_string =~ /\G$timespan_sep\s+/gi;
+            my @indexes;
             for (my $i = 0; $i < @strings; $i++) {
-                if ($extract_duration->(\%skip, \@indexes, $i)
-                 && $self->first_to_last_extract($duration, $get_range->(\@strings, $i), $get_range->(\@indexes, $i), \@tokens, \@chunks)
-                ) {
-                    $save_expression = true;
-                }
-                elsif ($extract_duration->(\%skip, \@indexes, $i)
-                 && $self->from_count_to_count_extract($duration, $get_range->(\@strings, $i), $get_range->(\@indexes, $i), \@tokens, \@chunks)
-                ) {
-                    $save_expression = true;
-                }
-                if ($save_expression) {
-                    foreach my $chunk (@chunks) {
-                        push @expressions, $chunk;
-                        $skip{$_} = true foreach ($chunk->[0][0] .. $chunk->[0][1]);
+                my @string_tokens = split /\s+/, $strings[$i];
+                push @indexes, [ $index, $index + $#string_tokens ];
+                $index += $#string_tokens + 1;
+                $index++ while defined $tokens[$index] && $tokens[$index] =~ /^$timespan_sep$/i;
+            }
+
+            my $duration = $self->{data}->{duration};
+
+            DURATION: {
+                for (my $i = 0; $i < @strings - 1; $i++) {
+                    next unless $extract_duration->(\%skip, \@indexes, $i);
+                    my $save_expression = false;
+                    my @chunks;
+                    foreach my $extract (qw(_first_to_last_extract _from_count_to_count_extract)) {
+                        if ($self->$extract($duration, $get_range->(\@strings, $i), $get_range->(\@indexes, $i), \@tokens, \@chunks)) {
+                            $save_expression = true;
+                            last;
+                        }
                     }
-                    redo DURATION;
+                    if ($save_expression) {
+                        my $timespan_sep_index = $chunks[0]->[0][1] + 1;
+                        my $expression = join ' ', ($chunks[0]->[1], $tokens[$timespan_sep_index], $chunks[1]->[1]);
+                        my @indexes = ($chunks[0]->[0][0], $chunks[1]->[0][1]);
+                        push @expressions, [ [ @indexes ], $expression, { flags => DURATION_TYPE } ];
+                        $skip{$_} = true foreach ($indexes[0] .. $indexes[1]);
+                        redo DURATION;
+                    }
                 }
             }
         }
@@ -150,7 +163,7 @@ sub _extract_expressions
                     ) {
                         my $expression = join ' ', (defined $date_index ? $tokens[$date_index] : (), @tokens[@indexes]);
                         my $start_index = defined $date_index ? $indexes[0] - 1 : $indexes[0];
-                        push @expressions, [ [ $start_index, $indexes[-1] ], $expression ];
+                        push @expressions, [ [ $start_index, $indexes[-1] ], $expression, { flags => GRAMMAR_TYPE } ];
                         $skip{$_} = true foreach (defined $date_index ? $date_index : (), @indexes);
                         $seen_expression = true;
                         last GRAMMAR;
@@ -159,7 +172,7 @@ sub _extract_expressions
             }
         }
         if (defined $date_index && !$seen_expression) {
-            push @expressions, [ [ ($date_index) x 2 ], $tokens[$date_index] ];
+            push @expressions, [ [ ($date_index) x 2 ], $tokens[$date_index], { flags => DATE_TYPE } ];
             $skip{$date_index} = true;
             $seen_expression = true;
         }
@@ -178,36 +191,41 @@ sub _finalize_expressions
 
     my $seen_duration = false;
 
-    foreach my $expression (sort { $a->[0][0] <=> $b->[0][0] } @$expressions) {
+    my @expressions = sort { $a->[0][0] <=> $b->[0][0] } @$expressions;
+
+    for (my $i = 0; $i < @expressions; $i++) {
+        my $expression = $expressions[$i];
+
         my $prev = $expression->[0][0] - 1;
         my $next = $expression->[0][1] + 1;
 
-        if (!$seen_duration && defined $tokens->[$next] && $tokens->[$next] =~ /^$timespan_sep$/i) {
-            if (@final_expressions && $tokens->[$prev] !~ /^$timespan_sep$/i) {
-                @duration_indexes = ();
+        if ($expression->[2]->{flags} & DATE_TYPE
+         || $expression->[2]->{flags} & GRAMMAR_TYPE
+        ) {
+            if (!$seen_duration
+             && defined $tokens->[$next]
+             &&         $tokens->[$next] =~ /^$timespan_sep$/i
+             && defined $expressions[$i + 1]
+             &&        ($expressions[$i + 1]->[2]->{flags} & DATE_TYPE
+                     || $expressions[$i + 1]->[2]->{flags} & GRAMMAR_TYPE)
+             &&         $expressions[$i + 1]->[0][0] - $next == 1
+            ) {
+                push @duration_indexes, ($expression->[0][0] .. $expression->[0][1]);
+                $seen_duration = true;
             }
-            push @duration_indexes, ($expression->[0][0] .. $expression->[0][1]);
-            $seen_duration = true;
-        }
-        elsif ($seen_duration) {
-            if ($prev - $duration_indexes[-1] == 1) {
+            elsif ($seen_duration) {
                 push @duration_indexes, ($prev, $expression->[0][0] .. $expression->[0][1]);
                 push @final_expressions, join ' ', @$tokens[@duration_indexes];
+                @duration_indexes = ();
+                $seen_duration = false;
             }
             else {
-                push @final_expressions, join ' ', @$tokens[@duration_indexes];
                 push @final_expressions, $expression->[1];
             }
-            @duration_indexes = ();
-            $seen_duration = false;
         }
-        else {
+        elsif ($expression->[2]->{flags} & DURATION_TYPE) {
             push @final_expressions, $expression->[1];
         }
-    }
-
-    if (@duration_indexes) {
-        push @final_expressions, join ' ', @$tokens[@duration_indexes];
     }
 
     my $exclude = sub { $_[0] =~ /^\d{1,2}$/ };
