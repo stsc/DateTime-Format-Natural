@@ -1,5 +1,27 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.01_05  2013-04-01  <schubiger@cpan.org>
+
+ - Parse and extract relative durations in reversed order.
+
+ - Document reversed relative durations under examples.
+
+ - Treat for <count> <unit> grammar expressions as durations.
+
+ - Refine gathering idents for from <count> to <count> durations.
+
+ - Use rightmost matching token on left side of duration as type.
+
+ - Split duration string only if accompanied by whitespace.
+
+ - Strengthen matching duration substrings against regexes.
+
+ - Extract regex captured punctuation marks in loop body.
+
+ - Undo some loop indentation in test files.
+
+ - Reorder version number variable in Calc class.
+
 1.01_04  2013-01-17  <schubiger@cpan.org>
 
  - Concatenate duration expression chunks with separator.

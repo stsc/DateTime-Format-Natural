@@ -12,7 +12,9 @@ use constant DATE_TYPE     => 0x01;
 use constant GRAMMAR_TYPE  => 0x02;
 use constant DURATION_TYPE => 0x04;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
+
+my %grammar_durations = map { $_ => true } qw(for_count_unit);
 
 my $get_range = sub
 {
@@ -38,7 +40,8 @@ sub _extract_expressions
     $extract_string =~ s/^\s*[,;.]?//;
     $extract_string =~ s/[,;.]?\s*$//;
 
-    while (my ($mark) = $extract_string =~ /([,;.])/cg) {
+    while ($extract_string =~ /([,;.])/g) {
+        my $mark = $1;
         my %patterns = (
             ',' => qr/(?!\d{4})/,
             ';' => qr/(?=\w)/,
@@ -163,7 +166,8 @@ sub _extract_expressions
                     ) {
                         my $expression = join ' ', (defined $date_index ? $tokens[$date_index] : (), @tokens[@indexes]);
                         my $start_index = defined $date_index ? $indexes[0] - 1 : $indexes[0];
-                        push @expressions, [ [ $start_index, $indexes[-1] ], $expression, { flags => GRAMMAR_TYPE } ];
+                        my $type = $grammar_durations{$keyword} ? DURATION_TYPE : GRAMMAR_TYPE;
+                        push @expressions, [ [ $start_index, $indexes[-1] ], $expression, { flags => $type } ];
                         $skip{$_} = true foreach (defined $date_index ? $date_index : (), @indexes);
                         $seen_expression = true;
                         last GRAMMAR;

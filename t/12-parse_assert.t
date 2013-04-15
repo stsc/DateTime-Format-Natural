@@ -5,7 +5,7 @@ use warnings;
 use boolean qw(true false);
 
 use DateTime::Format::Natural;
-use Test::More tests => 15;
+use Test::More tests => 16;
 
 {
     # Assert for prefixed dates that an extracted unit which is
@@ -100,4 +100,11 @@ use Test::More tests => 15;
 
     @expressions = $parser->extract_datetime('last day of 2012 to jan 1st to 31st');
     is_deeply(\@expressions, ['last day of 2012', 'jan 1st to 31st'], 'grammar overlapping duration');
+}
+
+{
+    # Assert that rightmost matching token on left side of duration is used to determine the type.
+    my $parser = DateTime::Format::Natural->new;
+    my @expressions = $parser->extract_datetime('23:30 some text jan 19th to 20th');
+    is_deeply(\@expressions, ['23:30', 'jan 19th to 20th'], 'last matching token in left duration substring');
 }

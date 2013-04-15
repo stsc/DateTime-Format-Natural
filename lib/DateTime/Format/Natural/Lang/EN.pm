@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.58';
+our $VERSION = '1.59';
 
 our (%init,
      %timespan,
@@ -152,12 +152,12 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
             },
             extract => {
                 left => {
-                    time => qr/$regexes{format_}|$re{day}\s+$re{month}/,
+                    time => qr/(?:$regexes{format_}|$re{day}\s+$re{month}|$re{month}\s+$re{day})/,
                     day  => qr/$re{month}/,
                 },
                 right => {
-                    time => qr/$re{day}\s+$re{month}/,
-                    day  => qr/$re{month}|day/i,
+                    time => qr/(?:$re{day}\s+$re{month}|$re{month}\s+$re{day})/,
+                    day  => qr/(?:$re{month}|day)/i,
                 },
             },
         },
@@ -4313,6 +4313,11 @@ also parsable with precision in seconds):
  may 2nd to 5th
  100th day to 200th
  6am dec 5 to 7am
+ 30th to 31st dec
+ 30th to dec 31st
+ 21:00 to mar 3 22:00
+ 21:00 to 22:00 mar 3
+ 10th to 20th day
  1/3 to 2/3
  2/3 to in 1 week
  3/3 21:00 to in 5 days

@@ -6,7 +6,7 @@ use warnings;
 use DateTime::Format::Natural::Duration::Checks;
 use List::MoreUtils qw(all);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub _pre_duration
 {
@@ -22,7 +22,7 @@ sub _pre_duration
         return $check->($self->{data}->{duration}, $date_strings, @_);
     };
 
-    my ($present, $extract, $adjust);
+    my ($present, $extract, $adjust, @indexes);
 
     if ($check_if->('for', \$present)) {
         @{$self->{insert}}{qw(datetime trace)} = do {
@@ -35,9 +35,9 @@ sub _pre_duration
             $date_strings->[0] .= " $complete";
         }
     }
-    elsif ($check_if->('from_count_to_count', \$extract, \$adjust)) {
-        if (my ($complete) = $date_strings->[0] =~ $extract) {
-            $adjust->($date_strings, $complete);
+    elsif ($check_if->('from_count_to_count', \$extract, \$adjust, \@indexes)) {
+        if (my ($complete) = $date_strings->[$indexes[0]] =~ $extract) {
+            $adjust->($date_strings, $indexes[1], $complete);
         }
     }
 }

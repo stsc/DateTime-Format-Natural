@@ -8,11 +8,11 @@ use base qw(
     DateTime::Format::Natural::Wrappers
 );
 
-our $VERSION = '1.39';
-
 use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
+
+our $VERSION = '1.40';
 
 sub _no_op
 {

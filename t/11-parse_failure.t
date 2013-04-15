@@ -380,12 +380,7 @@ my @ordinal_number = ($errors{ordinal_number},
     '22rd may 2011 9:35pm',
 ]);
 
-foreach my $list (\@with_suffix,
-                  \@without_suffix,
-                  \@meridiem_exceeds,
-                  \@meridiem_zero,
-                  \@ordinal_number)
-{
+foreach my $list (\@with_suffix, \@without_suffix, \@meridiem_exceeds, \@meridiem_zero, \@ordinal_number) {
     check($list);
 }
 

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use boolean qw(true false);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub for
 {
@@ -39,7 +39,11 @@ sub first_to_last
     }
 }
 
-my $anchor_regex = sub { my ($regex) = @_; qr/(?:^|(?<=\s))$regex(?:(?=\s)|$)/ };
+my %anchor_regex = (
+    left  => sub { my $regex = shift; qr/(?:^|(?<=\s))$regex/             },
+    right => sub { my $regex = shift; qr/$regex(?:(?=\s)|$)/              },
+    both  => sub { my $regex = shift; qr/(?:^|(?<=\s))$regex(?:(?=\s)|$)/ },
+);
 
 my $extract_chunk = sub
 {
@@ -87,18 +91,17 @@ sub _first_to_last_extract
 
     my %regexes = %{$duration->{first_to_last}{regexes}};
 
-    foreach my $name (qw(first last)) {
-        $regexes{$name} = $anchor_regex->($regexes{$name});
-    }
+    $regexes{first} = $anchor_regex{left}->($regexes{first});
+    $regexes{last}  = $anchor_regex{right}->($regexes{last});
 
     my $timespan_sep = $self->{data}->__timespan('literal');
 
     my @chunks;
-    if ($date_strings->[0] =~ /(?=($regexes{first}))/g) {
+    if ($date_strings->[0] =~ /(?=($regexes{first})$)/g) {
         my $match = $1;
         push @chunks, $extract_chunk->($date_strings->[0], $indexes->[0][0], pos $date_strings->[0], $match);
     }
-    if ($date_strings->[1] =~ /(?=($regexes{last}))/g) {
+    if ($date_strings->[1] =~ /(?=^($regexes{last}))/g) {
         my $match = $1;
         push @chunks, $extract_chunk->($date_strings->[1], $indexes->[1][0], pos $date_strings->[1], $match);
     }
@@ -111,94 +114,130 @@ sub _first_to_last_extract
     }
 }
 
-my $init_categories = sub
+my $duration_matches = sub
 {
-    my ($duration, $categories) = @_;
+    my ($duration, $date_strings, $entry, $target) = @_;
 
     my $data = $duration->{from_count_to_count};
 
+    my (@matches, %seen);
     foreach my $ident (@{$data->{order}}) {
-        my $category = $data->{categories}{$ident};
-        push @{$categories->{$category}}, $ident;
-    }
-};
-my $from_matches = sub
-{
-    my ($duration, $date_strings, $entry) = @_;
-
-    my $data = $duration->{from_count_to_count};
-
-    foreach my $ident (@{$data->{order}}) {
-        my $regex = $anchor_regex->($data->{regexes}{$ident});
-        if ($date_strings->[0] =~ $regex) {
-            $$entry = $ident;
-            return true;
+        my $regex = $anchor_regex{both}->($data->{regexes}{$ident});
+        while ($date_strings->[0] =~ /(?=$regex)/g) {
+            my $pos = pos $date_strings->[0];
+            next if $seen{$pos};
+            push @matches, [ $ident, $pos ];
+            $seen{$pos} = true;
         }
     }
-    return false;
-};
-my $to_relative_category = sub
-{
-    my ($duration, $date_strings, $categories, $entry, $target) = @_;
-
-    my $data = $duration->{from_count_to_count};
-
-    my $category = $data->{categories}{$entry};
-    foreach my $ident (@{$categories->{$category}}) {
-        my $regex = $anchor_regex->($data->{regexes}{$ident});
-        if ($date_strings->[1] =~ $regex) {
-            $$target = $ident;
-            return true;
-        }
-    }
-    return false;
-};
-
-sub from_count_to_count
-{
-    my ($duration, $date_strings, $extract, $adjust) = @_;
-
-    return false unless @$date_strings == 2;
+    my @idents = map $_->[0], sort { $a->[1] <=> $b->[1] } @matches;
 
     my %categories;
-    $init_categories->($duration, \%categories);
-
-    my ($entry, $target);
-    unless ($from_matches->($duration, $date_strings, \$entry)
- && $to_relative_category->($duration, $date_strings, \%categories, $entry, \$target)
-    ) {
-        return false;
+    foreach my $ident (@{$data->{order}}) {
+        my $category = $data->{categories}{$ident};
+        push @{$categories{$category}}, $ident;
     }
 
-    my $data = $duration->{from_count_to_count};
+    my $get_target = sub
+    {
+        my ($category, $target) = @_;
+        foreach my $ident (@{$categories{$category}}) {
+            my $regex = $anchor_regex{both}->($data->{regexes}{$ident});
+            if ($date_strings->[1] =~ $regex) {
+                $$target = $ident;
+                return true;
+            }
+        }
+        return false;
+    };
 
-    my $regex = $data->{regexes}{$entry};
-
-    if ($date_strings->[0] =~ /^.+? \s+ $regex$/x
-     && $date_strings->[1] =~ /^$data->{regexes}{$target}$/
+    if (@idents >= 2
+     && $data->{categories}{$idents[-1]} eq 'day'
+     && $data->{categories}{$idents[-2]} eq 'time'
+     && $get_target->($data->{categories}{$idents[-2]}, $target)
     ) {
-        $$extract = qr/^(.+?) \s+ $regex$/x;
-        $$adjust  = sub
-        {
-            my ($date_strings, $complete) = @_;
-            $date_strings->[1] = "$complete $date_strings->[1]";
-        };
+        $$entry = $idents[-2];
         return true;
     }
-    elsif ($date_strings->[0] =~ /^$regex \s+ .+$/x
-        && $date_strings->[1] =~ /^$data->{regexes}{$target}$/
+    elsif (@idents
+        && $get_target->($data->{categories}{$idents[-1]}, $target)
     ) {
-        $$extract = qr/^$regex \s+ (.+)$/x;
-        $$adjust  = sub
-        {
-            my ($date_strings, $complete) = @_;
-            $date_strings->[1] .= " $complete";
-        };
+        $$entry = $idents[-1];
         return true;
     }
     else {
         return false;
     }
+};
+
+sub from_count_to_count
+{
+    my ($duration, $date_strings, $extract, $adjust, $indexes) = @_;
+
+    return false unless @$date_strings == 2;
+
+    my ($entry, $target);
+    return false unless $duration_matches->($duration, $date_strings, \$entry, \$target);
+
+    my $data = $duration->{from_count_to_count};
+
+    my $get_data = sub
+    {
+        my ($types, $idents, $type) = @_;
+
+        my $regex = $data->{regexes}{$idents->[0]};
+        my %regexes = (
+            left   => qr/^.+? \s+ $regex$/x,
+            right  => qr/^$regex \s+ .+$/x,
+            target => qr/^$data->{regexes}{$idents->[1]}$/,
+        );
+        my %extract = (
+            left  => qr/^(.+?) \s+ $regex$/x,
+            right => qr/^$regex \s+ (.+)$/x,
+        );
+        my %adjust = (
+            left => sub
+            {
+                my ($date_strings, $index, $complete) = @_;
+                $date_strings->[$index] = "$complete $date_strings->[$index]";
+            },
+            right => sub
+            {
+                my ($date_strings, $index, $complete) = @_;
+                $date_strings->[$index] .= " $complete";
+            },
+        );
+
+        return (@regexes{@$types}, $extract{$type}, $adjust{$type});
+    };
+
+    my @sets = (
+        [ [ qw( left target) ], [ $entry, $target ], 'left',  [0,1] ],
+        [ [ qw(right target) ], [ $entry, $target ], 'right', [0,1] ],
+    );
+
+    my @new;
+    foreach my $set (@sets) {
+        push @new, [ [ reverse @{$set->[0]} ], [ reverse @{$set->[1]} ], $set->[2], [ reverse @{$set->[3]} ] ];
+    }
+    push @sets, @new;
+
+    foreach my $set (@sets) {
+        my ($regex_types, $idents, $type, $string_indexes) = @$set;
+
+        my ($regex_from, $regex_to, $extract_regex, $adjust_code) = $get_data->($regex_types, $idents, $type);
+
+        if ($date_strings->[0] =~ $regex_from
+         && $date_strings->[1] =~ $regex_to
+        ) {
+            $$extract = $extract_regex;
+            $$adjust  = $adjust_code;
+            @$indexes = @$string_indexes;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 sub _from_count_to_count_extract
@@ -207,51 +246,68 @@ sub _from_count_to_count_extract
 
     return false unless @$date_strings == 2;
 
-    my %categories;
-    $init_categories->($duration, \%categories);
-
     my ($entry, $target);
-    unless ($from_matches->($duration, $date_strings, \$entry)
- && $to_relative_category->($duration, $date_strings, \%categories, $entry, \$target)
-    ) {
-        return false;
-    }
+    return false unless $duration_matches->($duration, $date_strings, \$entry, \$target);
 
     my $data = $duration->{from_count_to_count};
 
-    my $category = $data->{categories}{$entry};
-    my $regex    = $data->{regexes}{$entry};
+    my $get_data = sub
+    {
+        my ($types, $idents) = @_;
 
-    my %regexes = (
-        left   => qr/$data->{extract}{left}{$category}\s+$regex/,
-        right  => qr/$regex\s+$data->{extract}{right}{$category}/,
-        target => $data->{regexes}{$target},
-    );
+        my $category = $data->{categories}{$idents->[0]};
+        my $regex    = $data->{regexes}{$idents->[0]};
 
-    foreach my $name (keys %regexes) {
-        $regexes{$name} = $anchor_regex->($regexes{$name});
-    }
+        my %regexes = (
+            left   => qr/$data->{extract}{left}{$category}\s+$regex/,
+            right  => qr/$regex\s+$data->{extract}{right}{$category}/,
+            target => $data->{regexes}{$idents->[1]},
+        );
+
+        $regexes{entry} = qr/(?:$regexes{left}|$regexes{right})/;
+
+        return @regexes{@$types};
+    };
 
     my $timespan_sep = $self->{data}->__timespan('literal');
 
-    my @chunks;
-    if ($date_strings->[0] =~ /(?=($regexes{left}))/g
-     || $date_strings->[0] =~ /(?=($regexes{right}))/g
-    ) {
-        my $match = $1;
-        push @chunks, $extract_chunk->($date_strings->[0], $indexes->[0][0], pos $date_strings->[0], $match);
+    my @sets = (
+        [ [ qw(entry target) ], [ $entry, $target ] ],
+    );
+
+    my @new;
+    foreach my $set (@sets) {
+        push @new, [ [ reverse @{$set->[0]} ], [ reverse @{$set->[1]} ] ];
     }
-    if ($date_strings->[1] =~ /(?=($regexes{target}))/g) {
-        my $match = $1;
-        push @chunks, $extract_chunk->($date_strings->[1], $indexes->[1][0], pos $date_strings->[1], $match);
+    push @sets, @new;
+
+    foreach my $set (@sets) {
+        my ($regex_types, $idents) = @$set;
+
+        my ($regex_from, $regex_to) = $get_data->($regex_types, $idents);
+
+        $regex_from = $anchor_regex{left}->($regex_from);
+        $regex_to   = $anchor_regex{right}->($regex_to);
+
+        my @chunks;
+        if ($date_strings->[0] =~ /(?=($regex_from)$)/g) {
+            my $match = $1;
+            push @chunks, $extract_chunk->($date_strings->[0], $indexes->[0][0], pos $date_strings->[0], $match);
+        }
+        if ($date_strings->[1] =~ /(?=^($regex_to))/g) {
+            my $match = $1;
+            push @chunks, $extract_chunk->($date_strings->[1], $indexes->[1][0], pos $date_strings->[1], $match);
+        }
+        if (@chunks == 2 && $has_timespan_sep->($tokens, \@chunks, $timespan_sep)) {
+            @$chunks = @chunks;
+            return true;
+        }
+
+        pos $date_strings->[0] = 0;
+        pos $date_strings->[1] = 0;
     }
-    if (@chunks == 2 && $has_timespan_sep->($tokens, \@chunks, $timespan_sep)) {
-        @$chunks = @chunks;
-        return true;
-    }
-    else {
-        return false;
-    }
+
+    return false;
 }
 
 1;

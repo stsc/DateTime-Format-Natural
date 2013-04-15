@@ -26,6 +26,7 @@ my @strings = (
     { 'we will stay for 3 days at the venue'                => [ 'for 3 days'                              ] },
     { 'from first to last day of october forms a month'     => [ 'first to last day of october'            ] },
     { '26 oct at 10am to 11:00 is spare time'               => [ '26 oct 10am to 11:00'                    ] },
+    { '3 days ago to for 3 days'                            => [ '3 days ago', 'for 3 days'                ] }, # separate for <count> <unit> grammar duration
 );
 
 my @expanded = (
@@ -85,12 +86,16 @@ my @durations = (
     { '16:00 6 nov to 17:00'            => [ '16:00 6 nov to 17:00'           ] },
     { '24 dec to 26'                    => [ '24 dec to 26'                   ] },
     { '100th day to 200th'              => [ '100th day to 200th'             ] },
+    { '30th to 31st dec'                => [ '30th to 31st dec'               ] },
+    { '30th to dec 31st'                => [ '30th to dec 31st'               ] },
+    { '21:00 to mar 3 22:00'            => [ '21:00 to mar 3 22:00'           ] },
+    { '21:00 to 22:00 mar 3'            => [ '21:00 to 22:00 mar 3'           ] },
+    { '10th to 20th day'                => [ '10th to 20th day'               ] },
 # rewrite
     { 'today at 5pm to tomorrow at 6am' => [ 'today 5pm to tomorrow 6am'      ] },
     { 'monday 7 am to friday 5 pm'      => [ 'monday 7am to friday 5pm'       ] },
     { 'tues to thurs'                   => [ 'tue to thu'                     ] },
     { 'sat @ 2 to sun @ 6'              => [ 'sat 2:00 to sun 6:00'           ] },
-
 );
 
 foreach my $set (\@strings, \@expanded, \@rewrite, \@punctuation, \@spaces, \@duration, \@durations) {

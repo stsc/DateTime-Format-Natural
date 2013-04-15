@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.01_04';
+our $VERSION = '1.01_05';
 
 validation_options(
     on_fail => sub
@@ -286,7 +286,7 @@ sub parse_datetime_duration
     $self->_params_init(@_, { string => \$duration_string });
     my $timespan_sep = $self->{data}->__timespan('literal');
 
-    my @date_strings = $duration_string =~ /\b $timespan_sep \b/ix
+    my @date_strings = $duration_string =~ /\s+ $timespan_sep \s+/ix
       ? do { $self->{duration} = true;
              split /\s+ $timespan_sep \s+/ix, $duration_string }
       : do { $self->{duration} = false;

@@ -44,13 +44,7 @@ my @spaces = (
     'now ',
 );
 
-foreach my $list (\@ordinal_number,
-                  \@durations,
-                  \@filtered,
-                  \@formatted,
-                  \@rewrite,
-                  \@spaces)
-{
+foreach my $list (\@ordinal_number, \@durations, \@filtered, \@formatted, \@rewrite, \@spaces) {
     check($list);
 }
 
