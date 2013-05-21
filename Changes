@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.02  2013-04-30  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.01_05  2013-04-01  <schubiger@cpan.org>
 
  - Parse and extract relative durations in reversed order.
