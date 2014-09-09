@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.02_01  2014-02-09  <schubiger@cpan.org>
+
+ - Add metadata repository link. [David Steinbrunner]
+
 1.02  2013-04-30  <schubiger@cpan.org>
 
  - Merged development version to stable.

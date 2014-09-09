@@ -182,6 +182,7 @@ CREDITS
      Chifung Fan
      Xiao Yafeng
      Roman Filippov
+     David Steinbrunner
 
 SEE ALSO
     dateparse, DateTime, Date::Calc, http://datetime.perl.org
