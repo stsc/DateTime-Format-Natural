@@ -4,7 +4,7 @@
       "Steven Schubiger <schubiger@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.112150",
+   "generated_by" : "Module::Build version 0.4212",
    "license" : [
       "perl_5"
    ],
@@ -16,44 +16,44 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "Cwd" : 0,
-            "File::Find" : 0,
-            "File::Spec" : 0,
-            "FindBin" : 0,
-            "Module::Util" : 0,
-            "Test::MockTime" : 0,
-            "Test::More" : 0
+            "Cwd" : "0",
+            "File::Find" : "0",
+            "File::Spec" : "0",
+            "FindBin" : "0",
+            "Module::Util" : "0",
+            "Test::MockTime" : "0",
+            "Test::More" : "0"
          }
       },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.38"
+            "Module::Build" : "0.42"
          }
       },
       "runtime" : {
          "recommends" : {
-            "Date::Calc" : 0
+            "Date::Calc" : "0"
          },
          "requires" : {
-            "Carp" : 0,
-            "Clone" : 0,
-            "DateTime" : 0,
-            "DateTime::TimeZone" : 0,
-            "Exporter" : 0,
-            "Getopt::Long" : 0,
-            "List::MoreUtils" : 0,
-            "Params::Validate" : 0,
-            "Scalar::Util" : 0,
-            "Storable" : 0,
-            "Term::ReadLine" : 0,
-            "boolean" : 0
+            "Carp" : "0",
+            "Clone" : "0",
+            "DateTime" : "0",
+            "DateTime::TimeZone" : "0",
+            "Exporter" : "0",
+            "Getopt::Long" : "0",
+            "List::MoreUtils" : "0",
+            "Params::Validate" : "0",
+            "Scalar::Util" : "0",
+            "Storable" : "0",
+            "Term::ReadLine" : "0",
+            "boolean" : "0"
          }
       }
    },
    "provides" : {
       "DateTime::Format::Natural" : {
          "file" : "lib/DateTime/Format/Natural.pm",
-         "version" : "1.02_01"
+         "version" : "1.02_02"
       },
       "DateTime::Format::Natural::Calc" : {
          "file" : "lib/DateTime/Format/Natural/Calc.pm",
@@ -121,5 +121,5 @@
          "url" : "https://github.com/stsc/DateTime-Format-Natural"
       }
    },
-   "version" : "1.02_01"
+   "version" : "1.02_02"
 }

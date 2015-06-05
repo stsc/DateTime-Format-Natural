@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.02_01';
+our $VERSION = '1.02_02';
 
 validation_options(
     on_fail => sub
@@ -614,6 +614,8 @@ sub _set_datetime
 1;
 __END__
 
+=encoding ISO8859-1
+
 =head1 NAME
 
 DateTime::Format::Natural - Create machine readable date/time with natural parsing logic
@@ -824,6 +826,7 @@ valuable suggestions and patches:
  Xiao Yafeng
  Roman Filippov
  David Steinbrunner
+ Debian Perl Group
 
 =head1 SEE ALSO
 
