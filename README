@@ -1,36 +1,49 @@
 NAME
-    DateTime::Format::Natural - Create machine readable date/time with
-    natural parsing logic
+    DateTime::Format::Natural - Parse informal natural language date/time
+    strings
 
 SYNOPSIS
      use DateTime::Format::Natural;
 
      $parser = DateTime::Format::Natural->new;
 
-     $date_string  = $parser->extract_datetime($extract_string);
-     @date_strings = $parser->extract_datetime($extract_string);
-
      $dt = $parser->parse_datetime($date_string);
      @dt = $parser->parse_datetime_duration($date_string);
 
+     $date_string  = $parser->extract_datetime($extract_string);
+     @date_strings = $parser->extract_datetime($extract_string);
+
      if ($parser->success) {
          # operate on $dt/@dt, for example:
-         printf("%02d.%02d.%4d %02d:%02d:%02d\n", $dt->day,
-                                                  $dt->month,
-                                                  $dt->year,
-                                                  $dt->hour,
-                                                  $dt->min,
-                                                  $dt->sec);
+         print $dt->strftime('%d.%m.%Y %H:%M:%S'), "\n";
      } else {
          warn $parser->error;
      }
 
      @traces = $parser->trace;
 
+     # examples
+
+     12:14 PM
+     next tuesday at 2am
+     tomorrow morning
+     4pm yesterday
+     10 weeks ago
+
+     1st tuesday last november
+     2nd friday in august
+     final thursday in april
+
+     for 3 hours
+     monday to friday
+     1 April 10 am to 1 May 8am
+
+     jan 24, 2011 12:00
+
 DESCRIPTION
-    "DateTime::Format::Natural" takes a string with a human readable
-    date/time and creates a machine readable one by applying natural parsing
-    logic.
+    "DateTime::Format::Natural" parses informal natural language date/time
+    strings. In addition, parsable date/time substrings may be extracted
+    from ordinary strings.
 
 CONSTRUCTOR
   new
@@ -79,7 +92,7 @@ CONSTRUCTOR
 
 METHODS
   parse_datetime
-    Returns a DateTime object constructed from a human readable date/time
+    Returns a DateTime object constructed from a natural language date/time
     string.
 
      $dt = $parser->parse_datetime($date_string);
@@ -90,7 +103,7 @@ METHODS
         The date string.
 
   parse_datetime_duration
-    Returns one or two DateTime objects constructed from a human readable
+    Returns one or two DateTime objects constructed from a natural language
     date/time string which may contain timespans/durations. *Same* interface
     and options as "parse_datetime()", but should be explicitly called in
     list context.
@@ -130,12 +143,12 @@ GRAMMAR
     hence everybody is encouraged to propose sensible new additions and/or
     changes.
 
-    See the classes "DateTime::Format::Natural::Lang::[language_code]" if
-    you're intending to hack a bit on the grammar guts.
+    See the class DateTime::Format::Natural::Lang::EN if you're intending to
+    hack a bit on the grammar guts.
 
 EXAMPLES
-    See the classes "DateTime::Format::Natural::Lang::[language_code]" for
-    an overview of currently valid input.
+    See the class DateTime::Format::Natural::Lang::EN for an overview of
+    currently valid input.
 
 BUGS & CAVEATS
     "parse_datetime()"/"parse_datetime_duration()" always return one or two
@@ -191,6 +204,7 @@ CREDITS
      Roman Filippov
      David Steinbrunner
      Debian Perl Group
+     Tim Bunce
 
 SEE ALSO
     dateparse, DateTime, Date::Calc, <http://datetime.perl.org>

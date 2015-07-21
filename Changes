@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.02_03  2015-07-21  <schubiger@cpan.org>
+
+ - Suggestions for simple documentation improvements.
+   [rt #98634 - Tim Bunce]
+
 1.02_02  2015-06-05  <schubiger@cpan.org>
 
  - Add encoding directive to POD. [rt #105000 - Debian Perl Group]

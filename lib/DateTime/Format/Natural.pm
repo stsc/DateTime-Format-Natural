@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.02_02';
+our $VERSION = '1.02_03';
 
 validation_options(
     on_fail => sub
@@ -618,7 +618,7 @@ __END__
 
 =head1 NAME
 
-DateTime::Format::Natural - Create machine readable date/time with natural parsing logic
+DateTime::Format::Natural - Parse informal natural language date/time strings
 
 =head1 SYNOPSIS
 
@@ -626,30 +626,43 @@ DateTime::Format::Natural - Create machine readable date/time with natural parsi
 
  $parser = DateTime::Format::Natural->new;
 
- $date_string  = $parser->extract_datetime($extract_string);
- @date_strings = $parser->extract_datetime($extract_string);
-
  $dt = $parser->parse_datetime($date_string);
  @dt = $parser->parse_datetime_duration($date_string);
 
+ $date_string  = $parser->extract_datetime($extract_string);
+ @date_strings = $parser->extract_datetime($extract_string);
+
  if ($parser->success) {
      # operate on $dt/@dt, for example:
-     printf("%02d.%02d.%4d %02d:%02d:%02d\n", $dt->day,
-                                              $dt->month,
-                                              $dt->year,
-                                              $dt->hour,
-                                              $dt->min,
-                                              $dt->sec);
+     print $dt->strftime('%d.%m.%Y %H:%M:%S'), "\n";
  } else {
      warn $parser->error;
  }
 
  @traces = $parser->trace;
 
+ # examples
+
+ 12:14 PM
+ next tuesday at 2am
+ tomorrow morning
+ 4pm yesterday
+ 10 weeks ago
+
+ 1st tuesday last november
+ 2nd friday in august
+ final thursday in april
+
+ for 3 hours
+ monday to friday
+ 1 April 10 am to 1 May 8am
+
+ jan 24, 2011 12:00
+
 =head1 DESCRIPTION
 
-C<DateTime::Format::Natural> takes a string with a human readable date/time and creates a
-machine readable one by applying natural parsing logic.
+C<DateTime::Format::Natural> parses informal natural language date/time strings.
+In addition, parsable date/time substrings may be extracted from ordinary strings.
 
 =head1 CONSTRUCTOR
 
@@ -706,7 +719,7 @@ which may be selectively changed.
 
 =head2 parse_datetime
 
-Returns a L<DateTime> object constructed from a human readable date/time string.
+Returns a L<DateTime> object constructed from a natural language date/time string.
 
  $dt = $parser->parse_datetime($date_string);
  $dt = $parser->parse_datetime(string => $date_string);
@@ -721,7 +734,7 @@ The date string.
 
 =head2 parse_datetime_duration
 
-Returns one or two L<DateTime> objects constructed from a human readable
+Returns one or two L<DateTime> objects constructed from a natural language
 date/time string which may contain timespans/durations. I<Same> interface
 and options as C<parse_datetime()>, but should be explicitly called in
 list context.
@@ -764,13 +777,13 @@ one string is commonly returned for durations. Useful as a debugging aid.
 The grammar handling has been rewritten to be easily extendable and hence
 everybody is encouraged to propose sensible new additions and/or changes.
 
-See the classes C<DateTime::Format::Natural::Lang::[language_code]> if
-you're intending to hack a bit on the grammar guts.
+See the class L<DateTime::Format::Natural::Lang::EN> if you're intending
+to hack a bit on the grammar guts.
 
 =head1 EXAMPLES
 
-See the classes C<DateTime::Format::Natural::Lang::[language_code]> for an
-overview of currently valid input.
+See the class L<DateTime::Format::Natural::Lang::EN> for an overview of
+currently valid input.
 
 =head1 BUGS & CAVEATS
 
@@ -827,6 +840,7 @@ valuable suggestions and patches:
  Roman Filippov
  David Steinbrunner
  Debian Perl Group
+ Tim Bunce
 
 =head1 SEE ALSO
 
