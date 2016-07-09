@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.03';
+our $VERSION = '1.03_01';
 
 validation_options(
     on_fail => sub
@@ -164,6 +164,31 @@ sub parse_datetime
         if ($self->{Prefer_future}) {
             $self->_advance_future('md');
         }
+    }
+    elsif ($date_string =~ /^(\d{4}(?:-\d{2}){0,2})T(\d{2}(?::\d{2}){0,2})$/) {
+        my ($date, $time) = ($1, $2);
+
+        my %args;
+
+        @args{qw(year month day)} = split /-/, $date;
+        $args{$_} ||= 01 foreach qw(month day);
+
+        @args{qw(hour minute second)} = split /:/, $time;
+        $args{$_} ||= 00 foreach qw(minute second);
+
+        my $valid_date = $self->_check_date(map $args{$_}, qw(year month day));
+        my $valid_time = $self->_check_time(map $args{$_}, qw(hour minute second));
+
+        if (not $valid_date && $valid_time) {
+            my $type = !$valid_date ? 'date' : 'time';
+            $self->_set_failure;
+            $self->_set_error("(invalid $type)");
+            return $self->_get_datetime_object;
+        }
+
+        $self->_set(%args);
+
+        $self->_set_valid_exp;
     }
     elsif ($date_string =~ /^([+-]) (\d+?) ([a-zA-Z]+)$/x) {
         my ($prefix, $value, $unit) = ($1, $2, lc $3);
