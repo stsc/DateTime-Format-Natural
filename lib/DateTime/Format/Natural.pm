@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.03_01';
+our $VERSION = '1.03_02';
 
 validation_options(
     on_fail => sub
@@ -866,6 +866,7 @@ valuable suggestions and patches:
  David Steinbrunner
  Debian Perl Group
  Tim Bunce
+ Ricardo Signes
 
 =head1 SEE ALSO
 

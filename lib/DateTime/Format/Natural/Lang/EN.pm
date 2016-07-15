@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.60';
+our $VERSION = '1.61';
 
 our (%init,
      %timespan,
@@ -4027,7 +4027,7 @@ language or implicitly.
 =head1 EXAMPLES
 
 Below are some examples of natural language date/time input in english (be aware
-that the parser does not distinguish between lower/upper case; furthermore,
+that the parser does usually not distinguish between lower/upper case; furthermore,
 many expressions allow for additional leading/trailing time and all times are
 also parsable with precision in seconds):
 
@@ -4375,6 +4375,7 @@ also parsable with precision in seconds):
  -5min
  +2d
  20111018000000
+ 2016-06-19T12:12:11
 
 =head2 Aliases
 

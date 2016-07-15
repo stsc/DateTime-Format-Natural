@@ -1,5 +1,13 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.03_02  2016-07-15  <schubiger@cpan.org>
+
+ - Document format: ISO 8601 <date>T<time>.
+
+ - Amend introduction text for examples section.
+
+ - List Ricardo Signes in credits.
+
 1.03_01  2016-07-09  <schubiger@cpan.org>
 
  - New supported format: ISO 8601 <date>T<time>.
