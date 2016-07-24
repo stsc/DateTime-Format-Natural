@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.04  2016-07-24  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.03_02  2016-07-15  <schubiger@cpan.org>
 
  - Document format: ISO 8601 <date>T<time>.

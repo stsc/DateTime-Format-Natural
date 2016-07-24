@@ -53,7 +53,7 @@
    "provides" : {
       "DateTime::Format::Natural" : {
          "file" : "lib/DateTime/Format/Natural.pm",
-         "version" : "1.03_02"
+         "version" : "1.04"
       },
       "DateTime::Format::Natural::Calc" : {
          "file" : "lib/DateTime/Format/Natural/Calc.pm",
@@ -112,7 +112,7 @@
          "version" : "0.03"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "license" : [
          "http://dev.perl.org/licenses/"
@@ -121,6 +121,6 @@
          "url" : "https://github.com/stsc/DateTime-Format-Natural"
       }
    },
-   "version" : "1.03_02",
+   "version" : "1.04",
    "x_serialization_backend" : "JSON::PP version 2.27203"
 }
