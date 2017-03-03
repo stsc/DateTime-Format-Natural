@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.61';
+our $VERSION = '1.62';
 
 our (%init,
      %timespan,
@@ -4009,6 +4009,35 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
          { truncate_to => [q(day)] },
        ],
     ],
+    variant_last_month => [
+       [ 'SCALAR', 'SCALAR', 'SCALAR', 'SCALAR' ],
+       [
+         { 0 => 'beginning', 1 => 'of', 2 => 'last', 3 => 'month' },
+         [],
+         [],
+         [
+           [
+             { VALUE => 1 },
+           ],
+         ],
+         [ {} ],
+         [ '_variant_last_month' ],
+         { truncate_to => [q(day)] },
+       ],
+       [
+         { 0 => 'end', 1 => 'of', 2 => 'last', 3 => 'month' },
+         [],
+         [],
+         [
+           [
+             { VALUE => undef },
+           ],
+         ],
+         [ {} ],
+         [ '_variant_last_month' ],
+         { truncate_to => [q(day)] },
+       ],
+    ],
 );
 
 1;
@@ -4299,6 +4328,8 @@ also parsable with precision in seconds):
  wednesday 1 month ago at 8pm
  final thursday in april
  last thursday in april
+ beginning of last month
+ end of last month
 
 =head2 Timespans
 

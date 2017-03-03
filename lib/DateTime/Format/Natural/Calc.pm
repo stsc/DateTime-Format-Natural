@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.40';
+our $VERSION = '1.41';
 
 sub _no_op
 {
@@ -381,6 +381,19 @@ sub _first_last_day_unit
         month => $month,
         day   => $day,
     );
+}
+
+sub _variant_last_month
+{
+    my $self = shift;
+    $self->_register_trace;
+    my $opts = pop;
+    my ($day) = @_;
+    $self->_subtract(month => 1);
+    unless (defined $day) {
+        $day = $self->_Days_in_Month($self->{datetime}->year, $self->{datetime}->month);
+    }
+    $self->_set(day => $day);
 }
 
 1;

@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.04_01  2017-03-03  <schubiger@cpan.org>
+
+ - New supported format: beginning/end of last month.
+   [rt #120436 - Shawn M. Moore]
+
 1.04  2016-07-24  <schubiger@cpan.org>
 
  - Merged development version to stable.

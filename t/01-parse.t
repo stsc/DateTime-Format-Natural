@@ -234,6 +234,8 @@ my @complex = (
     { 'final thursday in april'                    => '27.04.2006 00:00:00'     },
     { 'final sunday in april'                      => '30.04.2006 00:00:00'     }, # edge case
     { 'last thursday in april'                     => '27.04.2006 00:00:00'     },
+    { 'beginning of last month'                    => '01.10.2006 00:00:00'     },
+    { 'end of last month'                          => '31.10.2006 00:00:00'     },
 );
 
 my @specific = (
@@ -276,7 +278,7 @@ my @specific = (
     { '+2d'                                => '26.11.2006 01:13:08'     },
 );
 
-_run_tests(664, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
+_run_tests(666, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
 
 sub compare
 {
