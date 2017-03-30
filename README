@@ -4,6 +4,7 @@ NAME
 
 SYNOPSIS
      use DateTime::Format::Natural;
+     teste
 
      $parser = DateTime::Format::Natural->new;
 
@@ -178,7 +179,7 @@ CREDITS
      Cory Watson
      Urs Stotz
      Shawn M. Moore
-     Andreas J. König
+     Andreas J. KÃ¶nig
      Chia-liang Kao
      Jonny Schulz
      Jesse Vincent
