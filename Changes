@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.05_01  2018-10-25  <schubiger@cpan.org>
+
+ - Fix advancing to future when both datetime and prefer_future
+   options are provided.
+
 1.05  2017-04-23  <schubiger@cpan.org>
 
  - Merged development version to stable.
