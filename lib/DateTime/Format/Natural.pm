@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.05_01';
+our $VERSION = '1.05_02';
 
 validation_options(
     on_fail => sub
@@ -728,8 +728,7 @@ Specifies the format of numeric dates, defaults to 'C<d/m/y>'.
 
 =item * C<prefer_future>
 
-Turns ambiguous weekdays/months to their future relatives. Accepts a boolean,
-defaults to false.
+Prefers future time and dates. Accepts a boolean, defaults to false.
 
 =item * C<time_zone>
 

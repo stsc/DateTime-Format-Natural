@@ -77,8 +77,7 @@ CONSTRUCTOR
 
     *   "prefer_future"
 
-        Turns ambiguous weekdays/months to their future relatives. Accepts a
-        boolean, defaults to false.
+        Prefers future time and dates. Accepts a boolean, defaults to false.
 
     *   "time_zone"
 
