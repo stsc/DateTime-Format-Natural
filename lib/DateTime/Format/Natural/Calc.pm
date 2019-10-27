@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.42';
+our $VERSION = '1.43';
 
 sub _no_op
 {
@@ -87,10 +87,10 @@ sub _hourtime_variant
     my ($value, $when) = @_;
     my $hours = $opts->{hours} || 0;
     if ($self->_valid_time(hour => $hours)) {
-        $self->_set(hour => $hours);
+        $self->_set(hour => $hours, minute => 0, second => 0);
         $self->_add_or_subtract({
             when  => $when,
-            unit  => 'hour',
+            unit  => $opts->{unit},
             value => $value,
         });
     }

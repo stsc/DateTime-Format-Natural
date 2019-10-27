@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.63';
+our $VERSION = '1.64';
 
 our (%init,
      %timespan,
@@ -3510,8 +3510,36 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
          { truncate_to => [q(hour)] },
        ],
     ],
-    hourtime_before_variant => [
+    hourtime_before_after_variant => [
        [ 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR' ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(seconds?)$/i, 2 => qr/^(before)$/i, 3 => 'noon' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { hours => 12, unit => 'second' } ],
+         [ '_hourtime_variant' ],
+         {},
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(minutes?)$/i, 2 => qr/^(before)$/i, 3 => 'noon' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { hours => 12, unit => 'minute' } ],
+         [ '_hourtime_variant' ],
+         {},
+       ],
        [
          { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(before)$/i, 3 => 'noon' },
          [ [ 0, 1 ] ],
@@ -3522,9 +3550,37 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
              { 2 => [ $flag{before_after_from} ] },
            ],
          ],
-         [ { hours => 12 } ],
+         [ { hours => 12, unit => 'hour' } ],
          [ '_hourtime_variant' ],
-         { truncate_to => [q(hour)] },
+         {},
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(seconds?)$/i, 2 => qr/^(before)$/i, 3 => 'midnight' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { unit => 'second' } ],
+         [ '_hourtime_variant' ],
+         {},
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(minutes?)$/i, 2 => qr/^(before)$/i, 3 => 'midnight' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { unit => 'minute' } ],
+         [ '_hourtime_variant' ],
+         {},
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(before)$/i, 3 => 'midnight' },
@@ -3536,9 +3592,37 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
              { 2 => [ $flag{before_after_from} ] },
            ],
          ],
-         [ {} ],
+         [ { unit => 'hour' } ],
          [ '_hourtime_variant' ],
-         { truncate_to => [q(hour)] },
+         {},
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(seconds?)$/i, 2 => qr/^(after)$/i, 3 => 'noon' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { hours => 12, unit => 'second' } ],
+         [ '_hourtime_variant' ],
+         {},
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(minutes?)$/i, 2 => qr/^(after)$/i, 3 => 'noon' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { hours => 12, unit => 'minute' } ],
+         [ '_hourtime_variant' ],
+         {},
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(after)$/i, 3 => 'noon' },
@@ -3550,9 +3634,37 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
              { 2 => [ $flag{before_after_from} ] },
            ],
          ],
-         [ { hours => 12 } ],
+         [ { hours => 12, unit => 'hour' } ],
          [ '_hourtime_variant' ],
-         { truncate_to => [q(hour)] },
+         {},
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(seconds?)$/i, 2 => qr/^(after)$/i, 3 => 'midnight' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { unit => 'second' } ],
+         [ '_hourtime_variant' ],
+         {},
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(minutes?)$/i, 2 => qr/^(after)$/i, 3 => 'midnight' },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+           ],
+         ],
+         [ { unit => 'minute' } ],
+         [ '_hourtime_variant' ],
+         {},
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(after)$/i, 3 => 'midnight' },
@@ -3564,9 +3676,9 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
              { 2 => [ $flag{before_after_from} ] },
            ],
          ],
-         [ {} ],
+         [ { unit => 'hour' } ],
          [ '_hourtime_variant' ],
-         { truncate_to => [q(hour)] },
+         {},
        ],
     ],
     day_at => [
@@ -4314,9 +4426,17 @@ also parsable with precision in seconds):
  6 hours before tomorrow
  3 hours after yesterday
  3 hours after tomorrow
+ 10 seconds before noon
+ 10 minutes before noon
  10 hours before noon
+ 10 seconds before midnight
+ 10 minutes before midnight
  10 hours before midnight
+ 5 seconds after noon
+ 5 minutes after noon
  5 hours after noon
+ 5 seconds after midnight
+ 5 minutes after midnight
  5 hours after midnight
  noon last friday
  midnight last friday
