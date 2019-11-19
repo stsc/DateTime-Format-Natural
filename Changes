@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.07_02  2019-11-19  <schubiger@cpan.org>
+
+ - New supported format: <count> hours before/after today.
+   [github #6 - Felix Ostmann]
+
 1.07_01  2019-10-27  <schubiger@cpan.org>
 
  - New supported formats: <count> <unit> before/after

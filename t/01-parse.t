@@ -189,8 +189,10 @@ my @complex = (
     { '11 january this year'                       => '11.01.2006 00:00:00'     },
     { '11 january last year'                       => '11.01.2005 00:00:00'     },
     { '6 hours before yesterday'                   => '22.11.2006 18:00:00'     },
+    { '6 hours before today'                       => '23.11.2006 18:00:00'     },
     { '6 hours before tomorrow'                    => '24.11.2006 18:00:00'     },
     { '3 hours after yesterday'                    => '23.11.2006 03:00:00'     },
+    { '3 hours after today'                        => '24.11.2006 03:00:00'     },
     { '3 hours after tomorrow'                     => '25.11.2006 03:00:00'     },
     { '10 seconds before noon'                     => '24.11.2006 11:59:50'     },
     { '10 minutes before noon'                     => '24.11.2006 11:50:00'     },
@@ -289,7 +291,7 @@ my @specific = (
     { '+2d'                                => '26.11.2006 01:13:08'     },
 );
 
-_run_tests(677, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
+_run_tests(679, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
 
 sub compare
 {

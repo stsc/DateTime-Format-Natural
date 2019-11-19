@@ -13,7 +13,7 @@ use constant skip  => true;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.64';
+our $VERSION = '1.65';
 
 our (%init,
      %timespan,
@@ -3465,6 +3465,21 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
          { truncate_to => [q(hour)] },
        ],
        [
+         { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(before)$/i, 3 => qr/^(today)$/i },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+             { 3 => [ $flag{yes_today_tom} ] },
+           ],
+         ],
+         [ {} ],
+         [ '_daytime_hours_variant' ],
+         { truncate_to => [q(hour)] },
+       ],
+       [
          { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(before)$/i, 3 => qr/^(tomorrow)$/i },
          [ [ 0, 1 ] ],
          [ $extended_checks{suffix} ],
@@ -3481,6 +3496,21 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
        ],
        [
          { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(after)$/i, 3 => qr/^(yesterday)$/i },
+         [ [ 0, 1 ] ],
+         [ $extended_checks{suffix} ],
+         [
+           [
+               0,
+             { 2 => [ $flag{before_after_from} ] },
+             { 3 => [ $flag{yes_today_tom} ] },
+           ],
+         ],
+         [ {} ],
+         [ '_daytime_hours_variant' ],
+         { truncate_to => [q(hour)] },
+       ],
+       [
+         { 0 => $RE{number}, 1 => qr/^(hours?)$/i, 2 => qr/^(after)$/i, 3 => qr/^(today)$/i },
          [ [ 0, 1 ] ],
          [ $extended_checks{suffix} ],
          [
@@ -4423,8 +4453,10 @@ also parsable with precision in seconds):
  11 january this year
  11 january last year
  6 hours before yesterday
+ 6 hours before today
  6 hours before tomorrow
  3 hours after yesterday
+ 3 hours after today
  3 hours after tomorrow
  10 seconds before noon
  10 minutes before noon
