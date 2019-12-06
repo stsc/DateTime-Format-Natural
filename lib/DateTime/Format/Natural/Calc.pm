@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.43';
+our $VERSION = '1.44';
 
 sub _no_op
 {
@@ -246,20 +246,19 @@ sub _count_weekday_variant_month
     }
 }
 
-sub _daytime_hours_variant
+sub _daytime_unit_variant
 {
     my $self = shift;
     $self->_register_trace;
     my $opts = pop;
-    my ($hours, $when, $days) = @_;
-    my %values = (
-        -1 => { day => ($days - 1), hours => (24 - $hours) },
-         1 => { day => $days,       hours => (0  + $hours) },
-    );
-    if ($self->_valid_time(hour => $values{$when}->{hours})) {
-        $self->_add(day => $values{$when}->{day});
-        $self->_set(hour => $values{$when}->{hours});
-    }
+    my ($value, $when, $days) = @_;
+    $self->_add(day => $days);
+    $self->_set(hour => 0, minute => 0, second => 0);
+    $self->_add_or_subtract({
+        when  => $when,
+        unit  => $opts->{unit},
+        value => $value,
+    });
 }
 
 # wrapper for <time> AM/PM
