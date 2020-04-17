@@ -18,7 +18,7 @@ set_fixed_time(
 );
 
 my @simple = (
-    { 'friday'             => '24.11.2006 00:00:00'     },
+    { 'friday'             => '01.12.2006 00:00:00'     },
     { 'monday'             => '27.11.2006 00:00:00'     },
     { 'morning'            => '24.11.2006 08:00:00'     },
     { 'afternoon'          => '24.11.2006 14:00:00'     },
@@ -35,7 +35,7 @@ my @simple = (
     { 'next friday'        => '01.12.2006 00:00:00'     },
     { 'last friday'        => '17.11.2006 00:00:00'     },
     { '01:13:07'           => '25.11.2006 01:13:07'     },
-    { '01:13:08'           => '24.11.2006 01:13:08'     },
+    { '01:13:08'           => '25.11.2006 01:13:08'     },
     { '00:30:15'           => '25.11.2006 00:30:15'     },
     { '00:00{sec}'         => '25.11.2006 00:00:{sec}'  },
     { '12{min_sec}{ }am'   => '25.11.2006 00:{min_sec}' },
@@ -56,8 +56,8 @@ my @combined = (
     { 'monday {at} 8{min_sec}{ }am'    => '27.11.2006 08:{min_sec}' },
     { 'tuesday {at} 8{min_sec}{ }pm'   => '28.11.2006 20:{min_sec}' },
     { 'wednesday {at} 4{min_sec}{ }pm' => '29.11.2006 16:{min_sec}' },
-    { 'friday {at} 03:00{sec}{ }am'    => '24.11.2006 03:00:{sec}'  },
-    { 'friday {at} 03:00{sec}{ }pm'    => '24.11.2006 15:00:{sec}'  },
+    { 'friday {at} 03:00{sec}{ }am'    => '01.12.2006 03:00:{sec}'  },
+    { 'friday {at} 03:00{sec}{ }pm'    => '01.12.2006 15:00:{sec}'  },
     { 'monday {at} 03:00{sec}{ }am'    => '27.11.2006 03:00:{sec}'  },
     { 'monday {at} 03:00{sec}{ }pm'    => '27.11.2006 15:00:{sec}'  },
     { '4:00{sec} thu'                  => '30.11.2006 04:00:{sec}'  },
@@ -70,7 +70,7 @@ my @combined = (
 
 my @formatted = (
     { '1/3'   => '03.01.2007 00:00:00' },
-    { '11/24' => '24.11.2006 00:00:00' },
+    { '11/24' => '24.11.2007 00:00:00' },
     { '12/24' => '24.12.2006 00:00:00' },
 );
 
@@ -94,7 +94,7 @@ sub compare_strings
 {
     my ($string, $result) = @_;
 
-    my $parser = DateTime::Format::Natural->new(prefer_future => true);
+    my $parser = DateTime::Format::Natural->new(demand_future => true);
     my $dt = $parser->parse_datetime($string);
 
     if ($parser->success) {
