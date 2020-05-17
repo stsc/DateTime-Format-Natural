@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.09  2020-05-17  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.08_02  2020-05-01  <schubiger@cpan.org>
 
  - Require Params::Validate >=1.15 to fix test failures with
