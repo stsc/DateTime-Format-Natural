@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.10  2020-06-26  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.09_01  2020-06-21  <schubiger@cpan.org>
 
  - Support common unit abbreviations. [github #8 - grr]
