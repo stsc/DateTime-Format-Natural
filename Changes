@@ -1,5 +1,12 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.10_01  2020-08-21  <schubiger@cpan.org>
+
+ - Allow configuration to make "8/10" mean October 8.
+   [rt #133140 - Ricardo Signes]
+
+ - Minor tweaks.
+
 1.10  2020-06-26  <schubiger@cpan.org>
 
  - Merged development version to stable.

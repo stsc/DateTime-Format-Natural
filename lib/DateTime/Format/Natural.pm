@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.10';
+our $VERSION = '1.10_01';
 
 validation_options(
     on_fail => sub
@@ -68,7 +68,7 @@ sub _init
     $self->{Daytime} = $opts{daytime} || {};
 
     my $mod = join '::', (__PACKAGE__, 'Lang', uc $self->{Lang});
-    eval "require $mod"; die $@ if $@;
+    eval "require $mod" or die $@;
 
     $self->{data} = $mod->__new();
     $self->{grammar_class} = $mod;
@@ -99,7 +99,7 @@ sub _init_check
         format => {
             type => SCALAR,
             optional => true,
-            regex => qr!^(?:[dmy]{1,4}[-./]){2}[dmy]{1,4}$!i,
+            regex => qr!^(?:(?:[dmy]{1,4}[-./]){2}[dmy]{1,4})|(?:[dm]/[dm])$!i,
         },
         prefer_future => {
             # SCALARREF due to boolean.pm's implementation

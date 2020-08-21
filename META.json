@@ -53,7 +53,7 @@
    "provides" : {
       "DateTime::Format::Natural" : {
          "file" : "lib/DateTime/Format/Natural.pm",
-         "version" : "1.10"
+         "version" : "1.10_01"
       },
       "DateTime::Format::Natural::Calc" : {
          "file" : "lib/DateTime/Format/Natural/Calc.pm",
@@ -81,7 +81,7 @@
       },
       "DateTime::Format::Natural::Formatted" : {
          "file" : "lib/DateTime/Format/Natural/Formatted.pm",
-         "version" : "0.07"
+         "version" : "0.08"
       },
       "DateTime::Format::Natural::Helpers" : {
          "file" : "lib/DateTime/Format/Natural/Helpers.pm",
@@ -97,7 +97,7 @@
       },
       "DateTime::Format::Natural::Rewrite" : {
          "file" : "lib/DateTime/Format/Natural/Rewrite.pm",
-         "version" : "0.06"
+         "version" : "0.07"
       },
       "DateTime::Format::Natural::Test" : {
          "file" : "lib/DateTime/Format/Natural/Test.pm",
@@ -112,7 +112,7 @@
          "version" : "0.03"
       }
    },
-   "release_status" : "stable",
+   "release_status" : "testing",
    "resources" : {
       "license" : [
          "http://dev.perl.org/licenses/"
@@ -121,6 +121,6 @@
          "url" : "https://github.com/stsc/DateTime-Format-Natural"
       }
    },
-   "version" : "1.10",
+   "version" : "1.10_01",
    "x_serialization_backend" : "JSON::PP version 2.97001"
 }
