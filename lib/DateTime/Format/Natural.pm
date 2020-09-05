@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.10_01';
+our $VERSION = '1.10_02';
 
 validation_options(
     on_fail => sub
@@ -99,7 +99,11 @@ sub _init_check
         format => {
             type => SCALAR,
             optional => true,
-            regex => qr!^(?:(?:[dmy]{1,4}[-./]){2}[dmy]{1,4})|(?:[dm]/[dm])$!i,
+            regex => qr!^(?:
+                           (?: (?: [dmy]{1,4}[-./] ){2}[dmy]{1,4} )
+                             |
+                           (?: [dm]{1,2}/[dm]{1,2} )
+                         )$!ix,
         },
         prefer_future => {
             # SCALARREF due to boolean.pm's implementation

@@ -1,5 +1,13 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.10_02  2020-09-05  <schubiger@cpan.org>
+
+ - Allow mm/dd and dd/mm as valid formats and amend tests.
+
+ - Improve format matching regexes.
+
+ - List example with new format under examples section.
+
 1.10_01  2020-08-21  <schubiger@cpan.org>
 
  - Allow configuration to make "8/10" mean October 8.

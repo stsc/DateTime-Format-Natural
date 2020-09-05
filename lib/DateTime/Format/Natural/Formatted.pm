@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use boolean qw(true false);
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 sub _parse_formatted_ymd
 {
@@ -113,9 +113,11 @@ sub _parse_formatted_md
 
     # This method used to split the date with a format of m/d implicitly
     # assumed, so provide it if needed to retain backward compatibility.
-    my $format = $self->{Format} =~ m{^[dm]/[dm]$}i ? lc $self->{Format} : 'm/d';
+    my $format = $self->{Format} =~ m{^[dm]{1,2}/[dm]{1,2}$}i
+      ? do { local $_ = lc $self->{Format}; tr/dm//s; $_ }
+      : 'm/d';
 
-    unless ($format =~ m{^(?:m/d)|(?:d/m)$}) {
+    unless ($format =~ m{^(?:(?:m/d)|(?:d/m))$}) {
         $self->_set_failure;
         $self->_set_error("('format' parameter invalid)");
         return $self->_get_datetime_object;
