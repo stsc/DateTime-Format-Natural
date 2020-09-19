@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.10_02';
+our $VERSION = '1.10_03';
 
 validation_options(
     on_fail => sub
@@ -754,7 +754,27 @@ Defaults to 'C<en>'.
 
 =item * C<format>
 
-Specifies the format of numeric dates, defaults to 'C<d/m/y>'.
+Specifies the format of numeric dates.
+
+The format is used to influence how numeric dates are parsed. Given two
+numbers separated by a slash, the month/day order expected comes from
+this option. If there is a third number, this option describes where
+to expect the year. When this format can't be used to interpret the
+date, some unambiguous dates may be parsed, but there is no form
+guarantee.
+
+Current supported "month/day" formats: C<dd/mm>, C<mm/dd>.
+
+Current supported "year/month/day" formats (with slashes): C<dd/mm/yy>,
+C<dd/mm/yyyy>, C<mm/dd/yyyy>, C<yyyy/mm/dd>.
+
+Note that all of the above formats with three units do also parse
+with dots or dashes as format separators.
+
+Furthermore, formats can be abbreviated as long as they remain
+unambiguous.
+
+Defaults to 'C<d/m/y>'.
 
 =item * C<prefer_future>
 

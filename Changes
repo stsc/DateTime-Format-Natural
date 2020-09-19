@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.10_03  2020-09-19  <schubiger@cpan.org>
+
+ - Clarify meaning of format option.
+   [rt #133200 - Ricardo Signes]
+
 1.10_02  2020-09-05  <schubiger@cpan.org>
 
  - Allow mm/dd and dd/mm as valid formats and amend tests.
