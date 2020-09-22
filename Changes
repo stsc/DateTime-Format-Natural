@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.10_04  2020-09-22  <schubiger@cpan.org>
+
+ - Fail when parsing month/day with an explicit ymd-format.
+
 1.10_03  2020-09-19  <schubiger@cpan.org>
 
  - Clarify meaning of format option.

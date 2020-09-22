@@ -21,7 +21,7 @@ use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
 
-our $VERSION = '1.10_03';
+our $VERSION = '1.10_04';
 
 validation_options(
     on_fail => sub
@@ -72,6 +72,8 @@ sub _init
 
     $self->{data} = $mod->__new();
     $self->{grammar_class} = $mod;
+
+    $self->{format_provided} = exists $opts{format};
 }
 
 sub _init_check
