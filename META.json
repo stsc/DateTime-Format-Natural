@@ -53,7 +53,7 @@
    "provides" : {
       "DateTime::Format::Natural" : {
          "file" : "lib/DateTime/Format/Natural.pm",
-         "version" : "1.11_01"
+         "version" : "1.11_02"
       },
       "DateTime::Format::Natural::Calc" : {
          "file" : "lib/DateTime/Format/Natural/Calc.pm",
@@ -77,7 +77,7 @@
       },
       "DateTime::Format::Natural::Extract" : {
          "file" : "lib/DateTime/Format/Natural/Extract.pm",
-         "version" : "0.11"
+         "version" : "0.12"
       },
       "DateTime::Format::Natural::Formatted" : {
          "file" : "lib/DateTime/Format/Natural/Formatted.pm",
@@ -105,7 +105,7 @@
       },
       "DateTime::Format::Natural::Utils" : {
          "file" : "lib/DateTime/Format/Natural/Utils.pm",
-         "version" : "0.05"
+         "version" : "0.06"
       },
       "DateTime::Format::Natural::Wrappers" : {
          "file" : "lib/DateTime/Format/Natural/Wrappers.pm",
@@ -121,6 +121,6 @@
          "url" : "https://github.com/stsc/DateTime-Format-Natural"
       }
    },
-   "version" : "1.11_01",
+   "version" : "1.11_02",
    "x_serialization_backend" : "JSON::PP version 2.97001"
 }

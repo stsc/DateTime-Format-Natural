@@ -2,9 +2,13 @@ package DateTime::Format::Natural::Utils;
 
 use strict;
 use warnings;
+use base qw(Exporter);
 use boolean qw(true false);
 
-our $VERSION = '0.05';
+our ($VERSION, @EXPORT_OK);
+
+$VERSION = '0.06';
+@EXPORT_OK = qw(trim);
 
 sub _valid_date
 {
@@ -71,6 +75,16 @@ sub _trace_string
       map { my $unit = $_; "$unit: $modified->{$unit}" }
       sort { $order{$a} <=> $order{$b} }
       keys %$modified;
+}
+
+sub trim
+{
+    local $_ = ref $_[0] eq 'SCALAR' ? ${$_[0]} : $_[0];
+
+    s/^\s+//;
+    s/\s+$//;
+
+    return ref $_[0] eq 'SCALAR' ? do { ${$_[0]} = $_; '' } : $_;
 }
 
 1;

@@ -12,7 +12,9 @@ use constant DATE_TYPE     => 0x01;
 use constant GRAMMAR_TYPE  => 0x02;
 use constant DURATION_TYPE => 0x04;
 
-our $VERSION = '0.11';
+use DateTime::Format::Natural::Utils qw(trim);
+
+our $VERSION = '0.12';
 
 my %grammar_durations = map { $_ => true } qw(for_count_unit);
 
@@ -61,9 +63,7 @@ sub _extract_expressions
     my $timespan_sep = $self->{data}->__timespan('literal');
 
     if ($extract_string =~ /\s+ $timespan_sep \s+/ix) {
-        my $trim = sub { local $_ = shift; s/^\s+//; s/\s+$//; $_ };
-
-        my @strings = grep /\S/, map $trim->($_), split /\b$timespan_sep\b/i, do {
+        my @strings = grep /\S/, map trim($_), split /\b$timespan_sep\b/i, do {
             local $_ = $extract_string;
             1 while s/^$timespan_sep\s+//i;
             1 while s/\s+$timespan_sep$//i;
