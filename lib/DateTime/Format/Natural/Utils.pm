@@ -7,7 +7,7 @@ use boolean qw(true false);
 
 our ($VERSION, @EXPORT_OK);
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 @EXPORT_OK = qw(trim);
 
 sub _valid_date
@@ -92,7 +92,7 @@ __END__
 
 =head1 NAME
 
-DateTime::Format::Natural::Utils - Handy utility methods
+DateTime::Format::Natural::Utils - Handy utility functions/methods
 
 =head1 SYNOPSIS
 
@@ -100,7 +100,7 @@ DateTime::Format::Natural::Utils - Handy utility methods
 
 =head1 DESCRIPTION
 
-The C<DateTime::Format::Natural::Utils> class consists of utility methods.
+The C<DateTime::Format::Natural::Utils> class consists of utility functions/methods.
 
 =head1 SEE ALSO
 

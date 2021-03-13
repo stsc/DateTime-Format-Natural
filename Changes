@@ -1,5 +1,13 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.11_03  2021-03-13  <schubiger@cpan.org>
+
+ - Refactor extracting duration.
+
+ - Don't try to trim the extract string twice.
+
+ - Amend documentation of ::Utils.
+
 1.11_02  2020-10-16  <schubiger@cpan.org>
 
  - Introduce utility function trim().
