@@ -99,6 +99,7 @@ sub compare_strings
 
     my $pass = true;
     foreach my $i (0..$#dt) {
+        $pass &= $dt[$i]->nanosecond == 0;
         $pass &= _result_string($dt[$i]) eq $result->[$i];
     }
 

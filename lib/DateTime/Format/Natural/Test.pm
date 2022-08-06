@@ -14,9 +14,9 @@ use Test::More;
 our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings, $time_entries);
 my @set;
 
-$VERSION = '0.10';
+$VERSION = '0.11';
 
-@set         =  qw(%time $case_strings $time_entries _run_tests _result_string _message);
+@set         =  qw(%time $case_strings $time_entries _run_tests _result_string _result_string_hires _message);
 @EXPORT_OK   = (qw(_find_modules _find_files), @set);
 %EXPORT_TAGS = ('set' => [ @set ]);
 
@@ -120,16 +120,24 @@ sub _run_tests
     }
 }
 
+my $result_string = sub
+{
+    my ($dt, $fmt, $units) = @_;
+    return sprintf($fmt, map $dt->$_, @$units);
+};
+
 sub _result_string
 {
-    my ($dt) = @_;
+    return $result_string->(shift,
+                           '%02d.%02d.%4d %02d:%02d:%02d',
+                           [qw(day month year hour min sec)]);
+}
 
-    my $string = sprintf(
-        '%02d.%02d.%4d %02d:%02d:%02d',
-        map $dt->$_, qw(day month year hour min sec)
-    );
-
-    return $string;
+sub _result_string_hires
+{
+    return $result_string->(shift,
+                           '%02d.%02d.%4d %02d:%02d:%02d.%03d',
+                           [qw(day month year hour min sec millisecond)]);
 }
 
 sub _message
@@ -184,6 +192,7 @@ day:24
 hour:1
 minute:13
 second:8
+nanosecond:0
 
 __END__
 

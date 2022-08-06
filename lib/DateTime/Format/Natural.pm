@@ -15,6 +15,7 @@ use boolean qw(true false);
 
 use Carp qw(croak);
 use DateTime ();
+use DateTime::HiRes ();
 use DateTime::TimeZone ();
 use List::MoreUtils qw(all any none);
 use Params::Validate ':all';
@@ -23,7 +24,7 @@ use Storable qw(dclone);
 
 use DateTime::Format::Natural::Utils qw(trim);
 
-our $VERSION = '1.13';
+our $VERSION = '1.13_01';
 
 validation_options(
     on_fail => sub
@@ -216,6 +217,8 @@ sub parse_datetime
 
         $self->_set(%args);
 
+        $self->{datetime}->truncate(to => 'second');
+
         $self->_set_valid_exp;
     }
     elsif ($date_string =~ /^([+-]) (\d+?) ([a-zA-Z]+)$/x) {
@@ -304,7 +307,7 @@ sub _parse_init
             $self->{datetime} = dclone($self->{Datetime});
         }
         else {
-            $self->{datetime} = DateTime->$method(
+            $self->{datetime} = DateTime::HiRes->$method(
                 time_zone => $self->{Time_zone},
                 %$args,
             );
@@ -573,13 +576,13 @@ sub _advance_future
 
     my $now = exists $self->{Datetime}
       ? dclone($self->{Datetime})
-      : DateTime->now(time_zone => $self->{Time_zone});
+      : DateTime::HiRes->now(time_zone => $self->{Time_zone});
 
     my $day_of_week = sub { $_[0]->_Day_of_Week(map $_[0]->{datetime}->$_, qw(year month day)) };
 
     my $skip_weekdays = false;
 
-    if ((all { /^(?:second|minute|hour)$/ } keys %modified)
+    if ((all { /^(?:(?:nano)?second|minute|hour)$/ } keys %modified)
         && (exists $self->{modified}{hour} && $self->{modified}{hour} == 1)
         && (($self->{Prefer_future} && $self->{datetime} <  $now)
          || ($self->{Demand_future} && $self->{datetime} <= $now))
@@ -656,13 +659,14 @@ sub _get_datetime_object
     my $self = shift;
 
     my $dt = DateTime->new(
-        time_zone => $self->{datetime}->time_zone,
-        year      => $self->{datetime}->year,
-        month     => $self->{datetime}->month,
-        day       => $self->{datetime}->day_of_month,
-        hour      => $self->{datetime}->hour,
-        minute    => $self->{datetime}->minute,
-        second    => $self->{datetime}->second,
+        time_zone  => $self->{datetime}->time_zone,
+        year       => $self->{datetime}->year,
+        month      => $self->{datetime}->month,
+        day        => $self->{datetime}->day_of_month,
+        hour       => $self->{datetime}->hour,
+        minute     => $self->{datetime}->minute,
+        second     => $self->{datetime}->second,
+        nanosecond => $self->{datetime}->nanosecond,
     );
 
     foreach my $unit (keys %{$self->{postprocess}}) {

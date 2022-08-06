@@ -47,7 +47,7 @@ sub compare_strings
 
     my $dt = $parser->parse_datetime($string);
 
-    if ($parser->success) {
+    if ($parser->success && $dt->nanosecond == 0) {
         is(_result_string($dt), $result, _message($string));
     }
     else {
