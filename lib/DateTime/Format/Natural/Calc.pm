@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.45';
+our $VERSION = '1.46';
 
 my $multiply_by = sub
 {
@@ -94,7 +94,8 @@ sub _hourtime_variant
     my ($value, $when) = @_;
     my $hours = $opts->{hours} || 0;
     if ($self->_valid_time(hour => $hours)) {
-        $self->_set(hour => $hours, minute => 0, second => 0, nanosecond => 0);
+        $self->_set(hour => $hours);
+        $self->{datetime}->set(minute => 0, second => 0, nanosecond => 0);
         $self->_add_or_subtract({
             when  => $when,
             unit  => $opts->{unit},
@@ -260,7 +261,7 @@ sub _daytime_unit_variant
     my $opts = pop;
     my ($value, $when, $days) = @_;
     $self->_add(day => $days);
-    $self->_set(hour => 0, minute => 0, second => 0, nanosecond => 0);
+    $self->{datetime}->set(hour => 0, minute => 0, second => 0, nanosecond => 0);
     $self->_add_or_subtract({
         when  => $when,
         unit  => $opts->{unit},

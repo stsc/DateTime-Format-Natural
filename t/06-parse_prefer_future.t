@@ -100,7 +100,7 @@ sub compare_strings
     my $parser = DateTime::Format::Natural->new(prefer_future => true);
     my $dt = $parser->parse_datetime($string);
 
-    if ($parser->success && $dt->nanosecond == 0) {
+    if ($parser->success && $parser->_get_truncated) {
         is(_result_string($dt), $result, _message($string));
     }
     else {

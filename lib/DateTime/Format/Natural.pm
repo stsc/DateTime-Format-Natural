@@ -24,7 +24,7 @@ use Storable qw(dclone);
 
 use DateTime::Format::Natural::Utils qw(trim);
 
-our $VERSION = '1.13_01';
+our $VERSION = '1.13_02';
 
 validation_options(
     on_fail => sub
@@ -218,7 +218,7 @@ sub parse_datetime
         $self->_set(%args);
 
         $self->{datetime}->truncate(to => 'second');
-
+        $self->_set_truncated;
         $self->_set_valid_exp;
     }
     elsif ($date_string =~ /^([+-]) (\d+?) ([a-zA-Z]+)$/x) {
@@ -255,6 +255,8 @@ sub parse_datetime
 
         $self->_set(%args);
 
+        $self->{datetime}->truncate(to => 'second');
+        $self->_set_truncated;
         $self->_set_valid_exp;
     }
     else {
@@ -327,6 +329,7 @@ sub _parse_init
     $self->_unset_error;
     $self->_unset_valid_exp;
     $self->_unset_trace;
+    $self->_unset_truncated;
 }
 
 sub parse_datetime_duration
@@ -353,9 +356,9 @@ sub parse_datetime_duration
     }
 
     $self->_pre_duration(\@date_strings);
-    $self->{state} = {};
+    @$self{qw(state truncated_duration)} = ({}, []);
 
-    my (@queue, @traces);
+    my (@queue, @traces, @truncated);
     foreach my $date_string (@date_strings) {
         push @queue, $self->parse_datetime($date_string);
         $self->_save_state(
@@ -366,15 +369,19 @@ sub parse_datetime_duration
         if (@{$self->{traces}}) {
             push @traces, $self->{traces}[0];
         }
+        if ($self->{running_tests}) {
+            push @truncated, $self->_get_truncated;
+        }
     }
 
-    $self->_post_duration(\@queue, \@traces);
+    $self->_post_duration(\@queue, \@traces, \@truncated);
     $self->_restore_state;
 
     delete @$self{qw(duration insert state)};
 
-    @{$self->{traces}} = @traces;
-    $self->{input_string} = $duration_string;
+    @{$self->{traces}}             = @traces;
+    @{$self->{truncated_duration}} = @truncated;
+    $self->{input_string}          = $duration_string;
 
     if ($shrinked) {
         $self->_set_failure;
@@ -537,6 +544,7 @@ sub _truncate
         my $index = $indexes{$unit} - 1;
         if (defined $units[$index] && !exists $self->{modified}{$units[$index]}) {
             $self->{datetime}->truncate(to => $unit);
+            $self->_set_truncated;
             last;
         }
     }
@@ -653,6 +661,10 @@ sub _unset_failure   { $_[0]->{failure} = false }
 sub _get_valid_exp   { $_[0]->{valid_expression}         }
 sub _set_valid_exp   { $_[0]->{valid_expression} = true  }
 sub _unset_valid_exp { $_[0]->{valid_expression} = false }
+
+sub _get_truncated   { $_[0]->{truncated}         }
+sub _set_truncated   { $_[0]->{truncated} = true  }
+sub _unset_truncated { $_[0]->{truncated} = false }
 
 sub _get_datetime_object
 {

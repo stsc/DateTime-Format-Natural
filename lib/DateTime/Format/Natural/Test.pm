@@ -3,7 +3,9 @@ package DateTime::Format::Natural::Test;
 use strict;
 use warnings;
 use base qw(Exporter);
-use boolean qw(true);
+use boolean qw(true false);
+use constant truncated => true;
+use constant unaltered => false;
 
 use File::Find;
 use File::Spec::Functions qw(abs2rel);
@@ -14,9 +16,9 @@ use Test::More;
 our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings, $time_entries);
 my @set;
 
-$VERSION = '0.11';
+$VERSION = '0.12';
 
-@set         =  qw(%time $case_strings $time_entries _run_tests _result_string _result_string_hires _message);
+@set         =  qw(truncated unaltered %time $case_strings $time_entries _run_tests _result_string _result_string_hires _message);
 @EXPORT_OK   = (qw(_find_modules _find_files), @set);
 %EXPORT_TAGS = ('set' => [ @set ]);
 
@@ -82,10 +84,11 @@ $time_entries = sub
             );
             $desc = $1;
         }
+        my $is_aref = ref $result eq 'ARRAY';
         foreach my $value (@values) {
-            (my $str = $string) =~ s/\{$desc\}/$value->[0]/;
-            (my $res = $result) =~ s/\{$desc\}/$value->[1]/;
-            $subst->($str, $res, \@entries);
+            (my $str = $string)                           =~ s/\{$desc\}/$value->[0]/;
+            (my $res = $is_aref ? $result->[0] : $result) =~ s/\{$desc\}/$value->[1]/;
+            $subst->($str, $is_aref ? [ $res, $result->[1] ] : $res, \@entries);
         }
     }
     else {
