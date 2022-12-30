@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.14  2022-12-30  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.13_02  2022-12-29  <schubiger@cpan.org>
 
  - Distinguish between truncated/unaltered when testing.
