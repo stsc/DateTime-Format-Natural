@@ -1,5 +1,12 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.14_02  2023-01-09  <schubiger@cpan.org>
+
+ - Move testing modules to test_requires.
+   [github #20 - Olaf Alders]
+
+ - List Jim Avera in credits.
+
 1.14_01  2023-01-08  <schubiger@cpan.org>
 
  - Fix extract_datetime fails with newly-created parser.
