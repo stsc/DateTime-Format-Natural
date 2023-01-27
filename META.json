@@ -14,15 +14,6 @@
    },
    "name" : "DateTime-Format-Natural",
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "Cwd" : "0",
-            "File::Find" : "0",
-            "File::Spec" : "0",
-            "FindBin" : "0",
-            "Module::Util" : "0"
-         }
-      },
       "configure" : {
          "requires" : {
             "Module::Build" : "0.42"
@@ -50,6 +41,11 @@
       },
       "test" : {
          "requires" : {
+            "Cwd" : "0",
+            "File::Find" : "0",
+            "File::Spec" : "0",
+            "FindBin" : "0",
+            "Module::Util" : "0",
             "Test::MockTime::HiRes" : "0",
             "Test::More" : "0"
          }
@@ -58,7 +54,7 @@
    "provides" : {
       "DateTime::Format::Natural" : {
          "file" : "lib/DateTime/Format/Natural.pm",
-         "version" : "1.15"
+         "version" : "1.15_01"
       },
       "DateTime::Format::Natural::Calc" : {
          "file" : "lib/DateTime/Format/Natural/Calc.pm",
@@ -117,7 +113,7 @@
          "version" : "0.03"
       }
    },
-   "release_status" : "stable",
+   "release_status" : "testing",
    "resources" : {
       "license" : [
          "http://dev.perl.org/licenses/"
@@ -126,6 +122,6 @@
          "url" : "https://github.com/stsc/DateTime-Format-Natural"
       }
    },
-   "version" : "1.15",
+   "version" : "1.15_01",
    "x_serialization_backend" : "JSON::PP version 4.04"
 }
