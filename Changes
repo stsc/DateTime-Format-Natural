@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.15_03  2023-02-03  <schubiger@cpan.org>
+
+ - Drop generating compat Makefile.PL.
+
 1.15_02  2023-02-02  <schubiger@cpan.org>
 
  - Remove implicit m/d format; adjust tests.

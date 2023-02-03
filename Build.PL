@@ -38,7 +38,6 @@ my $build = Module::Build->new
    script_files => [ 'scripts/dateparse' ],
    license => 'perl',
    create_readme => 1,
-   create_makefile_pl => 'traditional',
    meta_merge => {
       resources => {
          repository => 'https://github.com/stsc/DateTime-Format-Natural',
