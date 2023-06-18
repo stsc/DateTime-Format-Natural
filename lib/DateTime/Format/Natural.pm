@@ -24,7 +24,7 @@ use Storable qw(dclone);
 
 use DateTime::Format::Natural::Utils qw(trim);
 
-our $VERSION = '1.16';
+our $VERSION = '1.16_01';
 
 validation_options(
     on_fail => sub
@@ -356,6 +356,8 @@ sub parse_datetime_duration
         splice (@date_strings, $offset);
         $shrinked = true;
     }
+
+    $self->_rewrite_duration(\@date_strings);
 
     $self->_pre_duration(\@date_strings);
     @$self{qw(state truncated_duration)} = ({}, []);
@@ -988,6 +990,7 @@ valuable suggestions and patches:
  Jim Avera
  Olaf Alders
  Karen Etheridge
+ Giovanni Pensa
 
 =head1 SEE ALSO
 
