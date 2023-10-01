@@ -24,7 +24,7 @@ use Storable qw(dclone);
 
 use DateTime::Format::Natural::Utils qw(trim);
 
-our $VERSION = '1.17';
+our $VERSION = '1.17_01';
 
 validation_options(
     on_fail => sub
@@ -853,7 +853,7 @@ recognized by L<DateTime>. Defaults to 'floating'.
 
 =item * C<daytime>
 
-An anonymous hash reference consisting of customized daytime hours,
+A hash reference consisting of customized daytime hours,
 which may be selectively changed.
 
 =back
