@@ -17,7 +17,7 @@ use Carp qw(croak);
 use DateTime ();
 use DateTime::HiRes ();
 use DateTime::TimeZone ();
-use List::MoreUtils qw(all any none);
+use List::Util 1.33 qw(all any none);
 use Params::Validate ':all';
 use Scalar::Util qw(blessed);
 use Storable qw(dclone);
