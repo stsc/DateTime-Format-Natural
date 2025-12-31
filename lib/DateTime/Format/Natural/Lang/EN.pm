@@ -203,7 +203,7 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
     {
         my ($first_stack, $rest_stack, $pos, $error) = @_;
 
-        my ($hour) = split /(:|\.)/, $first_stack->{$pos->[0]};
+        my ($hour) = split /[:\.]/, $first_stack->{$pos->[0]};
 
         if ($hour == 0) {
             $$error = 'hour zero must be literal 12';

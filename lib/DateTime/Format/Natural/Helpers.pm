@@ -117,7 +117,7 @@ sub _time_meridiem
     my $self = shift;
     my ($time, $period) = @_;
 
-    my ($hour) = split /(:|\.)/, $$time;
+    my ($hour) = split /[:\.]/, $$time;
 
     my %hours = (
         am => $hour - (($hour == 12) ? 12 :  0),
