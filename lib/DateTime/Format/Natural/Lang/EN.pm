@@ -47,10 +47,10 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
 
 %re = (number   => qr/(\d+)/,
        year     => qr/(\d{4})/,
-       time     => qr/((?:\d{1,2})(?:\:\d{2}(?:\:\d{2}(?:\.\d{3})?)?)?)/,
-       time_am  => qr/((?:\d{1,2})(?:\:\d{2}(?:\:\d{2}(?:\.\d{3})?)?)?)am/i,
-       time_pm  => qr/((?:\d{1,2})(?:\:\d{2}(?:\:\d{2}(?:\.\d{3})?)?)?)pm/i,
-       time_min => qr/(\d{1,2}\:\d{2}(?:\:\d{2}(?:\.\d{3})?)?)/,
+       time     => qr/((?:\d{1,2})(?:[:\.]\d{2}(?:[:\.]\d{2}(?:\.\d{3})?)?)?)/,
+       time_am  => qr/((?:\d{1,2})(?:[:\.]\d{2}(?:[:\.]\d{2}(?:\.\d{3})?)?)?)a\.?m\.?/i,
+       time_pm  => qr/((?:\d{1,2})(?:[:\.]\d{2}(?:[:\.]\d{2}(?:\.\d{3})?)?)?)p\.?m\.?/i,
+       time_min => qr/(\d{1,2}[:\.]\d{2}(?:[:\.]\d{2}(?:\.\d{3})?)?)/,
        day      => qr/(\d+)($suffixes{ordinal})?/i,
        monthday => qr/(\d{1,2})($suffixes{ordinal})?/i);
 {
@@ -134,8 +134,8 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
         },
         from_count_to_count => {
             regexes => {
-                time_meridiem => qr/\d{1,2}(?:\:\d{2}){0,2}(?:\s*?(?:am|pm))/i,
-                time          => qr/\d{1,2}(?:\:\d{2}){1,2}/,
+                time_meridiem => qr/\d{1,2}(?:[:\.]\d{2}){0,2}(?:\s*?(?:a\.?m\.?|p\.?m\.?))/i,
+                time          => qr/\d{1,2}(?:[:\.]\d{2}){1,2}/,
                 day_ordinal   => qr/\d{1,3}(?:$suffixes{ordinal})/i,
                 day           => qr/\d{1,3}/,
             },
@@ -203,7 +203,7 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
     {
         my ($first_stack, $rest_stack, $pos, $error) = @_;
 
-        my ($hour) = split /:/, $first_stack->{$pos->[0]};
+        my ($hour) = split /(:|\.)/, $first_stack->{$pos->[0]};
 
         if ($hour == 0) {
             $$error = 'hour zero must be literal 12';
