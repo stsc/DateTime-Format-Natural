@@ -1,5 +1,15 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.22_02  2026-01-03  <schubiger@cpan.org>
+
+ - Tighten time matching regexes.
+
+ - Document the new formats.
+
+ - Assert that parsing time with mixed characters fails.
+
+ - List "isla w" in credits.
+
 1.22_01  2025-12-31  <schubiger@cpan.org>
 
  - Add support for period character in time and am/pm.

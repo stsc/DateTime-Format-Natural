@@ -10,7 +10,7 @@ use constant VIRT_FLAG => false;
 
 our ($VERSION, @EXPORT_OK, %flag);
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 @EXPORT_OK = qw(%flag);
 
 my @flags = (

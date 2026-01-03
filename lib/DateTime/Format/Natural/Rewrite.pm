@@ -3,7 +3,7 @@ package DateTime::Format::Natural::Rewrite;
 use strict;
 use warnings;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 sub _rewrite
 {
