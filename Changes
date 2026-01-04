@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.23  2026-01-04  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.22_02  2026-01-03  <schubiger@cpan.org>
 
  - Tighten time matching regexes.
