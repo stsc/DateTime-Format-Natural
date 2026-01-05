@@ -218,10 +218,20 @@ sub parse_datetime
             $self->_advance_future('md');
         }
     }
-    elsif ($date_string =~ /^(\d{4}(?:-\d{2}){0,2})T(\d{2}(?::\d{2}){0,2})$/) {
-        my ($date, $time) = ($1, $2);
-
+    elsif ($date_string =~ /^(\d{4}(?:-\d{2}){0,2})T(\d{2}(?::\d{2}){0,2})(Z|[+-]\d{2}(?::?\d{2})?)?$/) {
+        my ($date, $time, $tz) = ($1, $2, $3);
         my %args;
+
+        if (defined $tz) {
+            if ($tz eq 'Z') {
+                $self->{datetime}->set_time_zone('UTC');
+            } elsif ($tz =~ /^([+-])(\d{2})$/) {
+                $tz = "$1$2:00";
+            } else {
+                $tz =~ s/^([+-])(\d{2}):?(\d{2})$/$1$2:$3/;
+            }
+            $self->{datetime}->set_time_zone($tz);
+        }
 
         @args{qw(year month day)} = split /-/, $date;
         $args{$_} ||= 01 foreach qw(month day);
