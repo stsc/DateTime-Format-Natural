@@ -1,5 +1,10 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.23_01  2026-01-09  <schubiger@cpan.org>
+
+ - Support optional time zone information in iso8601 time strings.
+   [github #26 - isla w]
+
 1.23  2026-01-04  <schubiger@cpan.org>
 
  - Merged development version to stable.

@@ -14,7 +14,7 @@ use constant milli_to_nano => 1_000_000;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.73';
+our $VERSION = '1.74';
 
 our (%init,
      %timespan,
