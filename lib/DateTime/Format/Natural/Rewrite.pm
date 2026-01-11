@@ -21,7 +21,7 @@ sub _rewrite_regular
     my $self = shift;
     my ($date_string) = @_;
 
-    $$date_string =~ tr/,//d;
+    $$date_string =~ s/,(?!\d)//g;
     $$date_string =~ s/\s+?(a\.?m\.?|p\.?m\.?)\b/$1/gi;
 }
 
