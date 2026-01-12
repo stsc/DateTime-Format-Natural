@@ -218,8 +218,8 @@ sub parse_datetime
             $self->_advance_future('md');
         }
     }
-    elsif ($date_string =~ /^(\d{4}(?:-\d{2}){0,2})T(\d{2}(?::\d{2}){0,2})(Z|[+-]\d{2}(?::?\d{2})?)?$/) {
-        my ($date, $time, $tz) = ($1, $2, $3);
+    elsif ($date_string =~ /^(\d{4}(?:-\d{2}){0,2})T(\d{2}(?::\d{2}){0,2})(?:[.,](\d+))?(Z|[+-]\d{2}(?::?\d{2})?)?$/) {
+        my ($date, $time, $fractional, $tz) = ($1, $2, $3, $4);
         my %args;
 
         if (defined $tz) {
@@ -239,6 +239,14 @@ sub parse_datetime
         @args{qw(hour minute second)} = split /:/, $time;
         $args{$_} ||= 00 foreach qw(minute second);
 
+        if (defined $fractional) {
+          my $nanosecond = $fractional;
+          if (length($nanosecond) < 9) {
+            $nanosecond .= '0' x (9 - length($nanosecond));
+          }
+          $args{nanosecond} = int($nanosecond);
+        }
+
         my $valid_date = $self->_check_date(map $args{$_}, qw(year month day));
         my $valid_time = $self->_check_time(map $args{$_}, qw(hour minute second));
 
@@ -250,8 +258,6 @@ sub parse_datetime
         }
 
         $self->_set(%args);
-
-        $self->{datetime}->truncate(to => 'second');
         $self->_set_truncated;
         $self->_set_valid_exp;
     }
