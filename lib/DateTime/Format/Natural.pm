@@ -24,7 +24,7 @@ use Storable qw(dclone);
 
 use DateTime::Format::Natural::Utils qw(trim);
 
-our $VERSION = '1.23_01';
+our $VERSION = '1.23_02';
 
 validation_options(
     on_fail => sub
@@ -240,11 +240,11 @@ sub parse_datetime
         $args{$_} ||= 00 foreach qw(minute second);
 
         if (defined $fractional) {
-          my $nanosecond = $fractional;
-          if (length($nanosecond) < 9) {
-            $nanosecond .= '0' x (9 - length($nanosecond));
-          }
-          $args{nanosecond} = int($nanosecond);
+            my $nanosecond = $fractional;
+            if (length($nanosecond) < 9) {
+                $nanosecond .= '0' x (9 - length($nanosecond));
+            }
+            $args{nanosecond} = int($nanosecond);
         }
 
         my $valid_date = $self->_check_date(map $args{$_}, qw(year month day));

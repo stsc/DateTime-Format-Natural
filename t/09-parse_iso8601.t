@@ -42,8 +42,8 @@ my @iso8601_fractional = (
     { '2016-06-19T12:12:11.1000000000' => { result => '19.06.2016 12:12:12', tz => 'floating', ns => 0 } },
 );
 
-compare( \@iso8601 );
-compare_fractional( \@iso8601_fractional );
+compare(\@iso8601);
+compare_fractional(\@iso8601_fractional);
 
 sub compare
 {
