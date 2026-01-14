@@ -51,7 +51,7 @@ sub compare
 
     foreach my $href (@$aref) {
         my $key = (keys %$href)[0];
-        compare_strings($key, $href->{$key}{result}, $href->{$key}{tz});
+        compare_strings($key, @{$href->{$key}}{qw(result tz)});
     }
 }
 
@@ -60,7 +60,7 @@ sub compare_fractional
     my $aref = shift;
     foreach my $href (@$aref) {
         my $key = (keys %$href)[0];
-        compare_with_fractional($key, $href->{$key}{result}, $href->{$key}{tz}, $href->{$key}{ns});
+        compare_with_fractional($key, @{$href->{$key}}{qw(result tz ns)});
     }
 }
 
@@ -72,7 +72,7 @@ sub compare_strings
 
     my $dt = $parser->parse_datetime($string);
 
-    if ($parser->success && $parser->_get_truncated) {
+    if ($parser->success) {
         is(_result_string($dt), $result, $string);
         is($dt->time_zone->name, $expected_tz, "$string - timezone");
     }
@@ -89,7 +89,7 @@ sub compare_with_fractional
 
     my $dt = $parser->parse_datetime($string);
 
-    if ($parser->success && $parser->_get_truncated) {
+    if ($parser->success) {
         is(_result_string($dt), $result, $string);
         is($dt->time_zone->name, $expected_tz, "$string - timezone");
         is($dt->nanosecond, $expected_ns, "$string - nanoseconds");

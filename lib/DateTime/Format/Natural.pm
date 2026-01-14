@@ -24,7 +24,7 @@ use Storable qw(dclone);
 
 use DateTime::Format::Natural::Utils qw(trim);
 
-our $VERSION = '1.23_02';
+our $VERSION = '1.23_03';
 
 validation_options(
     on_fail => sub
@@ -258,7 +258,6 @@ sub parse_datetime
         }
 
         $self->_set(%args);
-        $self->_set_truncated;
         $self->_set_valid_exp;
     }
     elsif ($date_string =~ /^([+-]) (\d+?) ([a-zA-Z]+)$/x) {
