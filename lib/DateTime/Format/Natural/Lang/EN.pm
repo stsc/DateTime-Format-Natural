@@ -14,7 +14,7 @@ use constant milli_to_nano => 1_000_000;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.74';
+our $VERSION = '1.75';
 
 our (%init,
      %timespan,
@@ -4774,7 +4774,7 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
             ],
           ],
           [ {} ],
-      [ '_begin_end_month' ],
+          [ '_begin_end_month' ],
           { truncate_to => [q(day)] },
         ],
     ],
@@ -5160,8 +5160,8 @@ also parsable with precision in (milli)seconds):
  end of last month
  beginning of 3 months ago
  end of 3 months ago
- beginning of last month
- end of last month
+ beginning of this month
+ end of this month
  beginning of 3 months from now
  end of 3 months from now
 

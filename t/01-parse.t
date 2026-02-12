@@ -268,6 +268,12 @@ my @complex = (
     { 'last thursday in april'                     => [ '27.04.2006 00:00:00',     truncated ] },
     { 'beginning of last month'                    => [ '01.10.2006 00:00:00',     truncated ] },
     { 'end of last month'                          => [ '31.10.2006 00:00:00',     truncated ] },
+    { 'beginning of 3 months ago'                  => [ '01.08.2006 00:00:00',     truncated ] },
+    { 'end of 3 months ago'                        => [ '31.08.2006 00:00:00',     truncated ] },
+    { 'beginning of this month'                    => [ '01.11.2006 00:00:00',     truncated ] },
+    { 'end of this month'                          => [ '30.11.2006 00:00:00',     truncated ] },
+    { 'beginning of 3 months from now'             => [ '01.02.2007 00:00:00',     truncated ] },
+    { 'end of 3 months from now'                   => [ '28.02.2007 00:00:00',     truncated ] },
 );
 
 my @specific = (
@@ -315,7 +321,7 @@ my @specific = (
     { '+2d'                                => [ '26.11.2006 01:13:08',     unaltered ] },
 );
 
-_run_tests(720, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
+_run_tests(726, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
 
 sub compare
 {

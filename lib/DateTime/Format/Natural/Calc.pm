@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.46';
+our $VERSION = '1.47';
 
 my $multiply_by = sub
 {

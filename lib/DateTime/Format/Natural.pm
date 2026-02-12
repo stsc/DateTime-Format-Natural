@@ -24,7 +24,7 @@ use Storable qw(dclone);
 
 use DateTime::Format::Natural::Utils qw(trim);
 
-our $VERSION = '1.24';
+our $VERSION = '1.24_01';
 
 validation_options(
     on_fail => sub
@@ -1029,6 +1029,7 @@ valuable suggestions and patches:
  Karen Etheridge
  Graham Ollis
  isla w
+ gibus
 
 =head1 SEE ALSO
 
