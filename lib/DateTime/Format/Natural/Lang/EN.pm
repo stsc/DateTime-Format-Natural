@@ -4718,6 +4718,37 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
          { truncate_to => [q(day)] },
        ],
     ],
+    begin_end_month_ago => [
+        [ 'SCALAR', 'SCALAR', 'REGEXP', 'REGEXP', 'SCALAR' ],
+        [
+          { 0 => 'beginning', 1 => 'of', 2 => $RE{number}, 3 => qr/^(months?)$/i, 4 => 'ago' },
+          [ [ 2, 3 ] ],
+          [ $extended_checks{suffix} ],
+          [
+            [ 2 ],
+            [
+              { VALUE => 1 },
+            ],
+          ],
+          [ { unit => 'month' }, {} ],
+          [ '_ago_variant', '_begin_end_month' ],
+          { truncate_to => [q(day)] },
+        ],
+        [
+          { 0 => 'end', 1 => 'of', 2 => $RE{number}, 3 => qr/^(months?)$/i, 4 => 'ago' },
+          [ [ 2, 3 ] ],
+          [ $extended_checks{suffix} ],
+          [
+            [ 2 ],
+            [
+              { VALUE => undef },
+            ],
+          ],
+          [ { unit => 'month' }, {} ],
+          [ '_ago_variant', '_begin_end_month' ],
+          { truncate_to => [q(day)] },
+        ],
+    ],
 );
 
 1;
