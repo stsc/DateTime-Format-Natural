@@ -4778,6 +4778,43 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
           { truncate_to => [q(day)] },
         ],
     ],
+    begin_end_month_from_now => [
+        [ 'SCALAR', 'SCALAR', 'REGEXP', 'REGEXP', 'REGEXP', 'SCALAR' ],
+        [
+          { 0 => 'beginning', 1 => 'of', 2 => $RE{number}, 3 => qr/^(months?)$/i, 4 => qr/^(from)$/i, 5 => 'now' },
+          [ [ 2, 3 ] ],
+          [ $extended_checks{suffix} ],
+          [
+            [
+                2,
+                { 4 => [ $flag{before_after_from} ] },
+            ],
+            [
+              { VALUE => 1 },
+            ],
+          ],
+          [ { unit => 'month' }, {}  ],
+          [ '_now_variant', '_begin_end_month' ],
+          { truncate_to => [q(day)] },
+        ],
+        [
+          { 0 => 'end', 1 => 'of', 2 => $RE{number}, 3 => qr/^(months?)$/i, 4 => qr/^(from)$/i, 5 => 'now' },
+          [ [ 2, 3 ] ],
+          [ $extended_checks{suffix} ],
+          [
+            [
+                2,
+                { 4 => [ $flag{before_after_from} ] },
+            ],
+            [
+              { VALUE => undef },
+            ],
+          ],
+          [ { unit => 'month' }, {}  ],
+          [ '_now_variant', '_begin_end_month' ],
+          { truncate_to => [q(day)] },
+        ],
+    ],
 );
 
 1;
