@@ -418,6 +418,18 @@ sub _variant_quarter
     });
 }
 
+sub _begin_end_month
+{
+    my $self = shift;
+    $self->_register_trace;
+    my $opts = pop;
+    my ($day) = @_;
+    unless (defined $day) {
+        $day = $self->_Days_in_Month($self->{datetime}->year, $self->{datetime}->month);
+    }
+    $self->_set(day => $day);
+}
+
 1;
 __END__
 
