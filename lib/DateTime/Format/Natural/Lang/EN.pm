@@ -4749,6 +4749,35 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
           { truncate_to => [q(day)] },
         ],
     ],
+    begin_end_this_month => [
+        [ 'SCALAR', 'SCALAR', 'SCALAR', 'SCALAR' ],
+        [
+          { 0 => 'beginning', 1 => 'of', 2 => 'this', 3 => 'month' },
+          [],
+          [],
+          [
+            [
+              { VALUE => 1 },
+            ],
+          ],
+          [ {} ],
+          [ '_begin_end_month' ],
+          { truncate_to => [q(day)] },
+        ],
+        [
+          { 0 => 'end', 1 => 'of', 2 => 'this', 3 => 'month' },
+          [],
+          [],
+          [
+            [
+              { VALUE => undef },
+            ],
+          ],
+          [ {} ],
+      [ '_begin_end_month' ],
+          { truncate_to => [q(day)] },
+        ],
+    ],
 );
 
 1;
