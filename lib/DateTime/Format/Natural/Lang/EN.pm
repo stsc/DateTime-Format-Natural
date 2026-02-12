@@ -5158,6 +5158,12 @@ also parsable with precision in (milli)seconds):
  last thursday in april
  beginning of last month
  end of last month
+ beginning of 3 months ago
+ end of 3 months ago
+ beginning of last month
+ end of last month
+ beginning of 3 months from now
+ end of 3 months from now
 
 =head2 Timespans
 
