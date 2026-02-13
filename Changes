@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.25  2026-02-13  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.24_01  2026-02-12  <schubiger@cpan.org>
 
  - Add parsing for beginning and end of x months ago, this month,
