@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.47';
+our $VERSION = '1.48';
 
 my $multiply_by = sub
 {
@@ -428,6 +428,30 @@ sub _begin_end_month
         $day = $self->_Days_in_Month($self->{datetime}->year, $self->{datetime}->month);
     }
     $self->_set(day => $day);
+}
+
+sub _christmas_new_year
+{
+    my $self = shift;
+    $self->_register_trace;
+    my $opts = pop;
+    my ($when) = @_;
+    my %datetime = (
+        christmas => { month => 12, day => 25 },
+        new_year  => { month =>  1, day =>  1 },
+    );
+    my ($month, $day) = @{$datetime{$opts->{type}}}{qw(month day)};
+    $self->{datetime}->set(hour => 0, minute => 0, second => 0, nanosecond => 0);
+    $self->_add(year => 1) if $opts->{type} eq 'new_year';
+    $self->_set(
+        month => $month,
+        day   => $day,
+    );
+    $self->_add_or_subtract({
+        when  => $when,
+        unit  => 'hour',
+        value => 4,
+    });
 }
 
 1;

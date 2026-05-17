@@ -321,7 +321,16 @@ my @specific = (
     { '+2d'                                => [ '26.11.2006 01:13:08',     unaltered ] },
 );
 
-_run_tests(726, [ [ \@simple ], [ \@complex ], [ \@specific ] ], \&compare);
+my @holidays = (
+    { 'christmas eve'   => [ '24.12.2006 20:00:00', unaltered ] },
+    { 'christmas day'   => [ '25.12.2006 00:00:00', unaltered ] },
+    { 'new years eve'   => [ '31.12.2006 20:00:00', unaltered ] },
+    { 'new years day'   => [ '01.01.2007 00:00:00', unaltered ] },
+    { 'new year\'s eve' => [ '31.12.2006 20:00:00', unaltered ] },
+    { 'new year\'s day' => [ '01.01.2007 00:00:00', unaltered ] },
+);
+
+_run_tests(732, [ [ \@simple ], [ \@complex ], [ \@specific ], [ \@holidays ] ], \&compare);
 
 sub compare
 {

@@ -14,7 +14,7 @@ use constant milli_to_nano => 1_000_000;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.75';
+our $VERSION = '1.76';
 
 our (%init,
      %timespan,
@@ -112,6 +112,7 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
         noon_midnight     => { noon => 12, midnight => 0                                       },
         morn_aftern_even  => { do { $i = 0; map { $_ => $i++ } qw(morning afternoon evening) } },
         before_after_from => { before => -1, after => 1, from => 1                             },
+        eve_day           => { do { $i = -1; map { $_ => $i++ } qw(eve day)                  } },
     );
 
     %data_helpers = (
@@ -4815,6 +4816,90 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
           { truncate_to => [q(day)] },
         ],
     ],
+    christmas => [
+        [ 'SCALAR', 'REGEXP' ],
+        [
+          { 0 => 'christmas', 1 => qr/^(eve)$/i },
+          [],
+          [],
+          [
+            [
+              { 1 => [ $flag{eve_day} ] },
+            ],
+          ],
+          [ { type => 'christmas' } ],
+          [ '_christmas_new_year' ],
+          {},
+        ],
+        [
+          { 0 => 'christmas', 1 => qr/^(day)$/i },
+          [],
+          [],
+          [
+            [
+              { 1 => [ $flag{eve_day} ] },
+            ],
+          ],
+          [ { type => 'christmas' } ],
+          [ '_christmas_new_year' ],
+          {},
+        ],
+    ],
+    new_year => [
+        [ 'SCALAR', 'SCALAR', 'REGEXP' ],
+        [
+          { 0 => 'new', 1 => 'years', 2 => qr/^(eve)$/i },
+          [],
+          [],
+          [
+            [
+              { 2 => [ $flag{eve_day} ] },
+            ],
+          ],
+          [ { type => 'new_year' } ],
+          [ '_christmas_new_year' ],
+          {},
+        ],
+        [
+          { 0 => 'new', 1 => 'years', 2 => qr/^(day)$/i },
+          [],
+          [],
+          [
+            [
+              { 2 => [ $flag{eve_day} ] },
+            ],
+          ],
+          [ { type => 'new_year' } ],
+          [ '_christmas_new_year' ],
+          {},
+        ],
+        [
+          { 0 => 'new', 1 => 'year\'s', 2 => qr/^(eve)$/i },
+          [],
+          [],
+          [
+            [
+              { 2 => [ $flag{eve_day} ] },
+            ],
+          ],
+          [ { type => 'new_year' } ],
+          [ '_christmas_new_year' ],
+          {},
+        ],
+        [
+          { 0 => 'new', 1 => 'year\'s', 2 => qr/^(day)$/i },
+          [],
+          [],
+          [
+            [
+              { 2 => [ $flag{eve_day} ] },
+            ],
+          ],
+          [ { type => 'new_year' } ],
+          [ '_christmas_new_year' ],
+          {},
+        ],
+    ],
 );
 
 1;
@@ -5274,6 +5359,15 @@ also parsable with precision in (milli)seconds):
  tues
  thurs
  thur
+
+=head2 Holidays
+
+ christmas eve
+ christmas day
+ new year's eve
+ new year's day
+ new years eve
+ new years day
 
 =head1 SEE ALSO
 

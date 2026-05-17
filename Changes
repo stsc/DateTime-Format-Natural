@@ -1,5 +1,11 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.25_01  2026-05-17  <schubiger@cpan.org>
+
+ - New supported formats: christmas/new year's eve/day.
+
+ - Test and document the new formats.
+
 1.25  2026-02-13  <schubiger@cpan.org>
 
  - Merged development version to stable.
