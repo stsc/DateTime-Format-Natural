@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.25_02  2026-05-25  <schubiger@cpan.org>
+
+ - Introduce ::Calendar which converts between calendar systems.
+
 1.25_01  2026-05-17  <schubiger@cpan.org>
 
  - New supported formats: christmas/new year's eve/day.

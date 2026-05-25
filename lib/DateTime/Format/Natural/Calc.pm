@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.48';
+our $VERSION = '1.49';
 
 my $multiply_by = sub
 {
@@ -436,14 +436,24 @@ sub _christmas_new_year
     $self->_register_trace;
     my $opts = pop;
     my ($when) = @_;
-    my %datetime = (
-        christmas => { month => 12, day => 25 },
-        new_year  => { month =>  1, day =>  1 },
-    );
-    my ($month, $day) = @{$datetime{$opts->{type}}}{qw(month day)};
+    my %holidays = %{$self->{data}->{holidays}};
+    my ($calendar, $type) = DateTime::Format::Natural::Calendar::_init($self->{Calendar_class});
+    my $year = $self->{datetime}->year;
+    my ($month, $day) = @{$holidays{$type}{$opts->{type}}}{qw(month day)};
     $self->{datetime}->set(hour => 0, minute => 0, second => 0, nanosecond => 0);
-    $self->_add(year => 1) if $opts->{type} eq 'new_year';
+    my $code = sub
+    {
+        my ($year, $month, $day, $opts) = @_;
+        $$year++ if $opts->{type} eq 'new_year';
+    };
+    if ($calendar->_can_convert) {
+        ($year, $month, $day) = $calendar->_to_gregorian($year, $month, $day, $opts, $code);
+    }
+    else {
+        $code->(\$year, \$month, \$day, $opts);
+    }
     $self->_set(
+        year  => $year,
         month => $month,
         day   => $day,
     );

@@ -14,7 +14,7 @@ use constant milli_to_nano => 1_000_000;
 
 use DateTime::Format::Natural::Helpers qw(%flag);
 
-our $VERSION = '1.76';
+our $VERSION = '1.77';
 
 our (%init,
      %timespan,
@@ -34,6 +34,7 @@ our (%init,
      %data_duration,
      %data_aliases,
      %data_rewrite,
+     %data_holidays,
      %extended_checks,
      %grammar);
 
@@ -195,6 +196,18 @@ $regexes{format} = qr/^$regexes{format_}(?:(?=\s)|$)/;
             match   => qr/\S+? \s+? at \s+? (\S+)/ix,
             subst   => qr/\s+? at \b/ix,
             daytime => qr/^(?:noon|midnight)$/i,
+        },
+    );
+
+    # month/day are expressed in the respective calendar system
+    %data_holidays = (
+        gregorian => {
+            christmas => { month => 12, day => 25 },
+            new_year  => { month =>  1, day =>  1 },
+        },
+        julian => {
+            christmas => { month => 12, day => 25 },
+            new_year  => { month =>  1, day =>  1 },
         },
     );
 }
