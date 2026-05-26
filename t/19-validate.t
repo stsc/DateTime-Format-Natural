@@ -8,7 +8,7 @@ use DateTime;
 use DateTime::Format::Natural;
 use DateTime::HiRes;
 use DateTime::TimeZone;
-use Test::More tests => 21;
+use Test::More;
 
 eval { DateTime::Format::Natural->new(lang => 'en') };
 ok(!$@, 'lang');
@@ -62,5 +62,9 @@ ok(!$@, 'datetime with DateTime::HiRes object');
 eval { DateTime::Format::Natural->new(calendar_class => undef) };
 ok(!$@, 'calendar_class undef');
 
-eval { DateTime::Format::Natural->new(calendar_class => 'DateTime::Calendar::Julian') };
-ok(!$@, 'calendar_class class');
+if (eval { require DateTime::Calendar::Julian; 1 }) {
+    eval { DateTime::Format::Natural->new(calendar_class => 'DateTime::Calendar::Julian') };
+    ok(!$@, 'calendar_class class');
+}
+
+done_testing();
