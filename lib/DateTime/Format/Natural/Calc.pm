@@ -12,7 +12,7 @@ use constant MORNING   => '08';
 use constant AFTERNOON => '14';
 use constant EVENING   => '20';
 
-our $VERSION = '1.49';
+our $VERSION = '1.50';
 
 my $multiply_by = sub
 {
@@ -437,9 +437,9 @@ sub _christmas_new_year
     my $opts = pop;
     my ($when) = @_;
     my %holidays = %{$self->{data}->{holidays}};
-    my ($calendar, $type) = DateTime::Format::Natural::Calendar::_init($self->{Calendar_class});
+    my $calendar = DateTime::Format::Natural::Calendar::_init($self->{Calendar_class});
     my $year = $self->{datetime}->year;
-    my ($month, $day) = @{$holidays{$type}{$opts->{type}}}{qw(month day)};
+    my ($month, $day) = @{$holidays{$calendar->{type}}{$opts->{type}}}{qw(month day)};
     $self->{datetime}->set(hour => 0, minute => 0, second => 0, nanosecond => 0);
     my $code = sub
     {

@@ -5,16 +5,15 @@ use warnings;
 
 use DateTime ();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub _init
 {
     my ($class) = @_;
 
     my $type = _type($class);
-    my $calendar = "DateTime::Format::Natural::Calendar::${type}"->_new(calendar_class => $class);
 
-    return ($calendar, $type);
+    return "DateTime::Format::Natural::Calendar::${type}"->_new(calendar_class => $class, type => $type);
 }
 
 sub _type

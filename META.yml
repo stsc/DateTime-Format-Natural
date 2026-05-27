@@ -22,13 +22,13 @@ name: DateTime-Format-Natural
 provides:
   DateTime::Format::Natural:
     file: lib/DateTime/Format/Natural.pm
-    version: 1.25_03
+    version: 1.25_04
   DateTime::Format::Natural::Calc:
     file: lib/DateTime/Format/Natural/Calc.pm
-    version: '1.49'
+    version: '1.50'
   DateTime::Format::Natural::Calendar:
     file: lib/DateTime/Format/Natural/Calendar.pm
-    version: '0.01'
+    version: '0.02'
   DateTime::Format::Natural::Calendar::gregorian:
     file: lib/DateTime/Format/Natural/Calendar.pm
   DateTime::Format::Natural::Calendar::julian:
@@ -92,5 +92,5 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: https://github.com/stsc/DateTime-Format-Natural
-version: 1.25_03
+version: 1.25_04
 x_serialization_backend: 'CPAN::Meta::YAML version 0.011'

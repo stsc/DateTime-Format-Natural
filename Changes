@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.25_04  2026-05-27  <schubiger@cpan.org>
+
+ - ::Calendar: make 'type' part of the object.
+
 1.25_03  2026-05-26  <schubiger@cpan.org>
 
  - Guard against non-existent calendar module when testing.
