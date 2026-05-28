@@ -1,5 +1,9 @@
 Revision history for Perl extension DateTime::Format::Natural.
 
+1.26  2026-05-28  <schubiger@cpan.org>
+
+ - Merged development version to stable.
+
 1.25_04  2026-05-27  <schubiger@cpan.org>
 
  - ::Calendar: make 'type' part of the object.
