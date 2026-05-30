@@ -16,7 +16,7 @@ use Test::More;
 our ($VERSION, @EXPORT_OK, %EXPORT_TAGS, %time, $case_strings, $time_entries);
 my @set;
 
-$VERSION = '0.13';
+$VERSION = '0.14';
 
 @set = qw(truncated unaltered %time $case_strings
           $time_entries _run_tests _result_string
@@ -109,7 +109,7 @@ sub _run_tests
 
     local $@;
 
-    if (eval "require Date::Calc") {
+    if (eval { require Date::Calc; 1 }) {
         plan tests => $tests * 2;
         foreach my $set (@$sets) {
             $check->(@$set);
